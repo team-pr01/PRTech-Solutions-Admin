@@ -1,0 +1,1 @@
+export const formatCount = (value?: number) => String(value ?? 0).padStart(2, "0");

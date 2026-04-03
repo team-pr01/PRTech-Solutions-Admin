@@ -1,0 +1,53 @@
+{
+  "name": "bright-tuition-care-client",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@emailjs/browser": "^4.4.1",
+    "@hookform/resolvers": "^5.1.1",
+    "@react-pdf/renderer": "^4.3.1",
+    "@reduxjs/toolkit": "^2.9.1",
+    "@types/react-vertical-timeline-component": "^3.3.6",
+    "emailjs": "^5.0.0",
+    "framer-motion": "^12.23.9",
+    "js-cookie": "^3.0.5",
+    "prop-types": "^15.8.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-helmet-async": "^2.0.5",
+    "react-hook-form": "^7.59.0",
+    "react-hot-toast": "^2.6.0",
+    "react-icons": "^5.5.0",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.6.3",
+    "react-vertical-timeline-component": "^3.5.3",
+    "recharts": "^3.2.1",
+    "redux-persist": "^6.0.0",
+    "socket.io-client": "^4.8.1",
+    "tailwind-merge": "^3.3.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.29.0",
+    "@tailwindcss/vite": "^4.1.11",
+    "@types/js-cookie": "^3.0.6",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.6",
+    "@types/react-native": "^0.72.8",
+    "@vitejs/plugin-react": "^4.5.2",
+    "eslint": "^9.29.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.2.0",
+    "swiper": "^11.2.0",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.34.1",
+    "vite": "^7.0.0"
+  }
+}
