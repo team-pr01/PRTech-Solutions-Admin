@@ -8,6 +8,8 @@ import AdminDashboardHome from "../pages/Dashboard/Admin/AdminDashboardHome/Admi
 import NotFound from "../pages/NotFound/NotFound";
 import Clients from "../pages/Dashboard/Admin/Clients/Clients";
 import ClientDetails from "../pages/Dashboard/Admin/Clients/ClientDetails";
+import Projects from './../pages/Dashboard/Admin/Projects/Projects';
+import ProjectDetails from "../pages/Dashboard/Admin/Projects/ProjectDetails";
 
 export const router = createBrowserRouter([
   // Main layout routes
@@ -43,6 +45,14 @@ export const router = createBrowserRouter([
       {
         path: "client/:id",
         element: <ClientDetails />,
+      },
+      {
+        path: "projects",
+        element: <Projects />,
+      },
+      {
+        path: "project/:id",
+        element: <ProjectDetails />,
       },
 
       {

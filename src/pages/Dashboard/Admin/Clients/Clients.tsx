@@ -19,6 +19,7 @@ const Clients = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
+  const skip = (page - 1) * limit;
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [sourceFilter, setSourceFilter] = useState<string>("");
@@ -26,6 +27,7 @@ const Clients = () => {
   const { data, isLoading, isFetching } = useGetAllClientsQuery({
     page,
     limit,
+    skip,
     keyword: searchQuery,
     status: statusFilter,
     source: sourceFilter,
@@ -175,13 +177,19 @@ const Clients = () => {
   };
 
   const handleDeleteClient = async (id: string) => {
-    if (window.confirm(`Are you sure you want to delete ${name}?`)) {
-      try {
-        await deleteClient(id).unwrap();
-        toast.success("Client deleted successfully");
-      } catch (error: any) {
-        toast.error(error.message || "Failed to delete client");
-      }
+    if (window.confirm(`Are you sure you want to delete "${name}"?`)) {
+      toast.promise(
+        (async () => {
+          const result = await deleteClient(id).unwrap();
+          return result;
+        })(),
+        {
+          loading: `Deleting client "${name}"...`,
+          success: `Client "${name}" deleted successfully`,
+          error: (error: any) =>
+            error?.data?.message || error?.message || "Failed to delete client",
+        },
+      );
     }
   };
 

@@ -7,6 +7,7 @@ const clientApi = baseApi.injectEndpoints({
       query: ({
         page,
         limit,
+        skip,
         status,
         keyword,
         source,
@@ -15,6 +16,7 @@ const clientApi = baseApi.injectEndpoints({
       }: {
         keyword?: string;
         limit?: number;
+        skip?: number;
         page?: number;
         status?: string;
         source?: string;
@@ -25,6 +27,7 @@ const clientApi = baseApi.injectEndpoints({
 
         if (keyword) params.append("keyword", keyword);
         if (typeof limit === "number") params.append("limit", limit.toString());
+        if (typeof skip === "number") params.append("skip", skip.toString());
         if (typeof page === "number") params.append("page", page.toString());
         if (status) params.append("status", status);
         if (source) params.append("source", source);
