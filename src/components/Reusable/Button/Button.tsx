@@ -66,7 +66,7 @@ const Button: React.FC<ButtonProps> = ({
     </style>
   ) : null;
 
-  const baseClasses = `flex items-center gap-2 text-lg leading-[24px] w-fit rounded-lg font-semibold font-Nunito transition-all duration-300 py-2 lg:py-3 px-3 lg:px-6 text-sm md:text-base ${
+  const baseClasses = `flex items-center gap-2 text-lg leading-[24px] w-fit rounded-lg font-semibold font-Nunito transition-all duration-300 py-2 px-3 text-sm md:text-base ${
     isDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
   } ${animationBaseClasses}`;
 

@@ -473,7 +473,7 @@ const ClientDetails = () => {
       </div>
 
       <Modal
-        heading="Add Subordinate"
+        heading={modalType === "add" ? "Add Subordinate" : "Edit Subordinate"}
         isModalOpen={isAddOrEditSubordinateModalOpen}
         setIsModalOpen={setIsAddOrEditSubordinateModalOpen}
       >

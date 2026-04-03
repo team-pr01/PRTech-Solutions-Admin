@@ -1,11 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import type { TableHead } from "../../../../components/Reusable/Table/Table";
-import { FiEye, FiUserPlus, FiUsers } from "react-icons/fi";
+import { FiEye, FiTrash2 } from "react-icons/fi";
 import Table from "../../../../components/Reusable/Table/Table";
 import { formatDate } from "../../../../utils/formatDate";
 import { useNavigate } from "react-router-dom";
-import { useGetAllClientsQuery } from "../../../../redux/Features/Client/clientApi";
+import {
+  useDeleteClientMutation,
+  useGetAllClientsQuery,
+} from "../../../../redux/Features/Client/clientApi";
+import Button from "../../../../components/Reusable/Button/Button";
+import Modal from "../../../../components/Reusable/Modal/Modal";
+import AddOrEditClient from "../../../../components/Dashboard/AdminPages/ClientPage/AddOrEditClient/AddOrEditClient";
+import { BiPencil } from "react-icons/bi";
+import { toast } from "react-hot-toast";
 
 const Clients = () => {
   const navigate = useNavigate();
@@ -22,6 +30,12 @@ const Clients = () => {
     status: statusFilter,
     source: sourceFilter,
   });
+  const [deleteClient] = useDeleteClientMutation();
+
+  const [modalType, setModalType] = useState<"add" | "edit">("add");
+  const [selectedClientId, setSelectedClientId] = useState<any>(null);
+  const [isAddOrEditClientModalOpen, setIsAddOrEditClientModalOpen] =
+    useState<boolean>(false);
 
   // Table headers
   const clientTableHeaders: TableHead[] = [
@@ -42,17 +56,19 @@ const Clients = () => {
       },
     },
     {
-      label: "Add Subordinate",
-      icon: <FiUserPlus className="inline text-green-600" />,
+      label: "Edit",
+      icon: <BiPencil className="inline" />,
       onClick: (row: any) => {
-        navigate(`/dashboard/admin/clients/${row._id}/add-subordinate`);
+        setSelectedClientId(row._id);
+        setModalType("edit");
+        setIsAddOrEditClientModalOpen(true);
       },
     },
     {
-      label: "View Subordinates",
-      icon: <FiUsers className="inline text-purple-600" />,
+      label: "Delete",
+      icon: <FiTrash2 className="inline" />,
       onClick: (row: any) => {
-        navigate(`/dashboard/admin/clients/${row._id}/subordinates`);
+        handleDeleteClient(row._id);
       },
     },
   ];
@@ -158,6 +174,17 @@ const Clients = () => {
     setSearchQuery(q);
   };
 
+  const handleDeleteClient = async (id: string) => {
+    if (window.confirm(`Are you sure you want to delete ${name}?`)) {
+      try {
+        await deleteClient(id).unwrap();
+        toast.success("Client deleted successfully");
+      } catch (error: any) {
+        toast.error(error.message || "Failed to delete client");
+      }
+    }
+  };
+
   // Status filter dropdown
   const statusFilterDropdown = (
     <select
@@ -196,6 +223,14 @@ const Clients = () => {
     <div className="flex gap-2">
       {statusFilterDropdown}
       {sourceFilterDropdown}
+      <Button
+        onClick={() => {
+          setModalType("add");
+          setIsAddOrEditClientModalOpen(true);
+        }}
+        label={"Add Client"}
+        className="py-2 lg:py-2 px-3 lg:px-3 text-sm md:text-sm"
+      />
     </div>
   );
 
@@ -216,6 +251,18 @@ const Clients = () => {
         setLimit={setLimit}
         children={filters}
       />
+
+      <Modal
+        heading={modalType === "add" ? "Add Client" : "Edit Client"}
+        isModalOpen={isAddOrEditClientModalOpen}
+        setIsModalOpen={setIsAddOrEditClientModalOpen}
+      >
+        <AddOrEditClient
+          clientId={selectedClientId}
+          modalType={modalType}
+          onClose={() => setIsAddOrEditClientModalOpen(false)}
+        />
+      </Modal>
     </div>
   );
 };
