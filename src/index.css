@@ -179,3 +179,7 @@
 .animate-pulse-button {
   animation: pulse-animation 1.8s ease-in-out infinite;
 }
+
+button {
+  cursor: pointer;
+}

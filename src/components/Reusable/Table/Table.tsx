@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef, useState } from "react";
 import { ICONS } from "../../../assets";
-import { filterData } from "../../../constants/filterData";
 import NoData from "../NoData/NoData";
 import LogoLoader from "../LogoLoader/LogoLoader";
 
@@ -52,12 +51,6 @@ export default function Table<T extends Record<string, any>>({
   onPageChange,
   isLoading = false,
   onSearch,
-  selectedCity,
-  setSelectedCity,
-  selectedArea,
-  setSelectedArea,
-  areaOptions,
-  setAreaOptions,
   limit = 10,
   setLimit,
   children,
@@ -130,24 +123,6 @@ export default function Table<T extends Record<string, any>>({
     onPageChange(page);
   };
 
-  // For city and area/location filter
-  useEffect(() => {
-    if (setAreaOptions && setSelectedArea) {
-      if (!selectedCity) {
-        setAreaOptions([]);
-        setSelectedArea(""); // reset single selected area
-        return;
-      }
-    }
-
-    const cityObj = filterData.cityCorporationWithLocation.find(
-      (city) => city.name === selectedCity,
-    );
-
-    if (setAreaOptions) setAreaOptions(cityObj ? cityObj.locations : []);
-    if (setSelectedArea) setSelectedArea(""); // reset when city changes
-  }, [selectedCity]);
-
   const limits = [5, 10, 15, 20, 25, 30, 50, 100];
 
   return (
@@ -187,41 +162,6 @@ export default function Table<T extends Record<string, any>>({
               </option>
             ))}
           </select>
-
-          {selectedCity !== null && (
-            <select
-              value={selectedCity}
-              onChange={(e) =>
-                setSelectedCity && setSelectedCity(e.target.value)
-              }
-              className="input input-sm px-3 py-2 border border-neutral-55/60 focus:border-primary-10 transition duration-300 focus:outline-none rounded-md text-sm shadow-sm cursor-pointer"
-            >
-              <option value="">Select City</option>
-              {filterData.cityCorporationWithLocation.map((city) => (
-                <option key={city.name} value={city.name}>
-                  {city.name}
-                </option>
-              ))}
-            </select>
-          )}
-
-          {selectedArea !== null && (
-            <select
-              value={selectedArea}
-              onChange={(e) =>
-                setSelectedArea && setSelectedArea(e.target.value)
-              }
-              disabled={(areaOptions?.length ?? 0) === 0}
-              className="input input-sm px-3 py-2 border border-neutral-55/60 focus:border-primary-10 transition duration-300 focus:outline-none rounded-md text-sm shadow-sm cursor-pointer"
-            >
-              <option value="">Select Area</option>
-              {areaOptions?.map((area: string) => (
-                <option key={area} value={area}>
-                  {area}
-                </option>
-              ))}
-            </select>
-          )}
 
           {children && children}
         </div>

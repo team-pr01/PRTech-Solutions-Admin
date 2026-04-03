@@ -7,8 +7,7 @@ import { setUser } from "../Features/Auth/authSlice";
 import type { RootState } from "../store";
 
 // export const backendBaseUrl = "http://localhost:5000";
-// export const backendBaseUrl = "https://bright-tuition-care-server.onrender.com";
-export const backendBaseUrl = "https://api.brighttuitioncare.com";
+export const backendBaseUrl = "https://prtech-solutions-server.vercel.app";
 const baseQuery = fetchBaseQuery({
   baseUrl: `${backendBaseUrl}/api/v1`,
   credentials: "include",
@@ -57,23 +56,7 @@ export const baseApi = createApi({
   tagTypes: [
     "admin",
     "users",
-    "tutor",
-    "guardian",
-    "jobs",
-    "applications",
-    "tutorials",
-    "invoices",
-    "staff",
-    "testimonial",
-    "notice",
-    "confirmationLetter",
-    "invoice",
-    "lead",
-    "notification",
-    "application",
-    "payment",
-    "refundRequest",
-    "verificationRequest",
+    "client"
   ],
   endpoints: () => ({}),
 });

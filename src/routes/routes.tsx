@@ -6,6 +6,8 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import ErrorComponent from "../components/Reusable/ErrorComponent/ErrorComponent";
 import AdminDashboardHome from "../pages/Dashboard/Admin/AdminDashboardHome/AdminDashboardHome";
 import NotFound from "../pages/NotFound/NotFound";
+import Clients from "../pages/Dashboard/Admin/Clients/Clients";
+import ClientDetails from "../pages/Dashboard/Admin/Clients/ClientDetails";
 
 export const router = createBrowserRouter([
   // Main layout routes
@@ -33,6 +35,14 @@ export const router = createBrowserRouter([
       {
         path: "home",
         element: <AdminDashboardHome />,
+      },
+      {
+        path: "clients",
+        element: <Clients />,
+      },
+      {
+        path: "client/:id",
+        element: <ClientDetails />,
       },
 
       {

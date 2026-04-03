@@ -14,9 +14,9 @@ const LogoLoader = ({
   size = "md"
 }: LogoLoaderProps) => {
   const sizeClasses = {
-    sm: "w-16",
-    md: "w-24",
-    lg: "w-32"
+    sm: "w-24",
+    md: "w-32",
+    lg: "w-44"
   };
 
   const containerVariants:any = {
@@ -98,7 +98,7 @@ const LogoLoader = ({
               className="relative"
             >
               <motion.img 
-                src={IMAGES.logoBlueVertical} 
+                src={IMAGES.logo} 
                 alt="Loading..." 
                 className={`${sizeClasses[size]} object-contain`}
                 animate={{
