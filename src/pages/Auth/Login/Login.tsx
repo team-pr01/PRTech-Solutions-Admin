@@ -9,7 +9,7 @@ import { setUser } from "../../../redux/Features/Auth/authSlice";
 import TextInput from "../../../components/Reusable/TextInput/TextInput";
 import PasswordInput from "../../../components/Reusable/PasswordInput/PasswordInput";
 import Button from "../../../components/Reusable/Button/Button";
-import { ICONS } from "../../../assets";
+import { ICONS, IMAGES } from "../../../assets";
 
 type TFormData = {
   email: string;
@@ -54,8 +54,9 @@ const Login = () => {
     <div className="flex justify-center items-center min-h-screen bg-neutral-50/20 px-4">
       <form
         onSubmit={handleSubmit(handleSigIn)}
-        className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl p-6 md:p-8 flex flex-col gap-6 font-Nunito border border-primary-10/20"
+        className="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center gap-6 font-Nunito border border-primary-10/20"
       >
+        <img src={IMAGES.logo} alt="" className="w-40" />
         {/* Email */}
         <TextInput
           label="Email"
@@ -88,7 +89,7 @@ const Login = () => {
 
         <Button
           type="submit"
-          label="Sign In"
+          label="Log In"
           variant="primary"
           iconWithoutBg={ICONS.topRightArrowWhite}
           className="py-2 lg:py-2 w-full md:w-fit"

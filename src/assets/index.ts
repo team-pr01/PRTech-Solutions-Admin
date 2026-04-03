@@ -3,10 +3,7 @@ import plus from "../assets/Icons/plus.svg";
 import topRightArrow from "../assets/Icons/top-right-arrow.svg";
 import topRightArrowWhite from "../assets/Icons/top-right-arrow-white.svg";
 import testimonials from "../assets/Icons/testimonials.svg";
-import stepLine from "../assets/Images/steps-line.png";
 import logoWhite from "../assets/Icons/logo-white.png";
-import logoWhiteVertical from "../assets/Images/logo-white.png";
-import logoBlueVertical from "../assets/Icons/logo-blue-vertical.webp";
 import menu from "../assets/Icons/menu.svg";
 
 import logo from "../assets/Images/logo.png";
@@ -26,36 +23,6 @@ import packageTutoring from "../assets/Icons/package-tutoring.svg";
 import appStore from "../assets/DownloadStore/app-store.svg";
 import playStore from "../assets/DownloadStore/play-store.svg";
 
-// service categories
-import admissionTest from "../assets/Images/serviceCatagories/Admission-Test.png";
-import arbi from "../assets/Images/serviceCatagories/Arbi.png";
-import banglaMedium from "../assets/Images/serviceCatagories/Bangla-Medium.png";
-import drawing from "../assets/Images/serviceCatagories/Drawing.png";
-import englishMedium from "../assets/Images/serviceCatagories/English-Medium.png";
-import englishVersion from "../assets/Images/serviceCatagories/English-Version.png";
-import languageLearning from "../assets/Images/serviceCatagories/Language-Learning.png";
-import professionalSkillDevelopment from "../assets/Images/serviceCatagories/Professional-Skill- Development.png";
-import specialChildEducation from "../assets/Images/serviceCatagories/Special-Child-Education.png";
-import specialSkillDevelopment from "../assets/Images/serviceCatagories/Special-Skill-Develepment.png";
-import testPreparation from "../assets/Images/serviceCatagories/Test-Preparation.png";
-import uniHelp from "../assets/Images/serviceCatagories/Uni-Help.png";
-import termsAndConditionHero from "../assets/Images/terms-and-condition-hero.webp";
-import tutorOfTheMonthBg from "../assets/Images/tutor-of-the-month-bg.png";
-import tutorOfTheMonthLabel from "../assets/Images/tutor-of-the-month-label.png";
-import tutorOfTheMonthBadge from "../assets/Images/tutor-of-the-month-badge.png";
-import guardianOfTheMonthLabel from "../assets/Images/guardian-of-the-month-label.png";
-import userProfilePlaceholder from "../assets/Images/user-profile-placeholder.webp";
-import bkashQrCode from "../assets/Images/bkash-qr-code.webp";
-import rocketQrCode from "../assets/Images/rocket-qr-code.webp";
-import tutorial1 from "../assets/Images/tutorials/1.webp";
-import tutorial2 from "../assets/Images/tutorials/2.webp";
-import tutorial3 from "../assets/Images/tutorials/3.webp";
-import tutorial4 from "../assets/Images/tutorials/4.webp";
-import tutorial5 from "../assets/Images/tutorials/5.webp";
-import tutorial6 from "../assets/Images/tutorials/6.webp";
-import tutorial7 from "../assets/Images/tutorials/7.webp";
-import tutorial8 from "../assets/Images/tutorials/8.webp";
-import tutorial9 from "../assets/Images/tutorials/9.webp";
 
 // students steps
 import send from "../assets/Icons/StudentSteps/send.svg";
@@ -131,21 +98,7 @@ import hire from "../assets/Icons/hire-tutor.webp";
 import applications from "../assets/Icons/applications.svg";
 import threeDots from "../assets/Icons/three-dots.svg";
 import suspend from "../assets/Icons/suspend.svg";
-import teacher from "../assets/Icons/teacher.webp";
-import guardian from "../assets/Icons/guardians.webp";
 
-import aboutUs from "../assets/Images/about-us.jpg";
-import appDownload from "../assets/Images/app-download.webp";
-import heroImg1 from "../assets/Images/hero-images/hero-img-1.webp";
-import heroImg2 from "../assets/Images/hero-images/hero-img-2.webp";
-import heroImg3 from "../assets/Images/hero-images/hero-img-3.webp";
-import heroImg4 from "../assets/Images/hero-images/hero-img-4.webp";
-import dummyAvatar from "../assets/Images/dummy-avatar.jpg"; //dummy, please remove after integrating api
-import contactUs from "../assets/Images/contact-us.webp";
-import forgotPassword from "../assets/Images/forgot-password.webp";
-import resetPassword from "../assets/Images/reset-password.webp";
-import verifyOtp from "../assets/Images/verify-otp.png";
-import community from "../assets/Images/community.webp";
 import loader from "../assets/Icons/loader.svg";
 import verified from "../assets/Icons/verified.svg";
 import secure from "../assets/Icons/secure.svg";
@@ -180,53 +133,7 @@ import admissionTestIcon from "../assets/Icons/admission-test.svg";
 
 
 export const IMAGES = {
-  logoWhiteVertical,
-  logoBlueVertical,
-  heroImg1,
-  heroImg2,
-  heroImg3,
-  heroImg4,
-  aboutUs,
-  appDownload,
-  stepLine,
-
-  admissionTest,
-  arbi,
-  banglaMedium,
-  drawing,
-  englishMedium,
-  englishVersion,
-  languageLearning,
-  professionalSkillDevelopment,
-  specialChildEducation,
-  specialSkillDevelopment,
-  testPreparation,
-  uniHelp,
-  dummyAvatar,
-  contactUs,
-  teacher,
-  guardian,
-  termsAndConditionHero,
-  forgotPassword,
-  resetPassword,
-  verifyOtp,
-  community,
-  tutorOfTheMonthBg,
-  tutorOfTheMonthLabel,
-  tutorOfTheMonthBadge,
-  guardianOfTheMonthLabel,
-  userProfilePlaceholder,
-  bkashQrCode,
-  rocketQrCode,
-  tutorial1,
-  tutorial2,
-  tutorial3,
-  tutorial4,
-  tutorial5,
-  tutorial6,
-  tutorial7,
-  tutorial8,
-  tutorial9,
+  logo,
 
 };
 
@@ -236,7 +143,7 @@ export const ICONS = {
   topRightArrow,
   topRightArrowWhite,
   testimonials,
-  logo,
+  
   logoWhite,
   menu,
 

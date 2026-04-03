@@ -22,11 +22,17 @@ const RoleBasedNavlinks = ({
           onClick={() => setIsHamburgerOpen && setIsHamburgerOpen(false)}
           className={`flex items-center gap-2 rounded-lg p-2 transform transition-transform duration-500 hover:-translate-y-1 ${
             location?.pathname === link?.path
-              ? "bg-white text-primary-10 font-semibold"
-              : "font-medium  text-white  bg-none"
+              ? "bg-primary-10 text-white font-semibold"
+              : "font-medium text-neutral-20 bg-none"
           }`}
         >
-          <div className="size-6 rounded-full flex items-center justify-center bg-primary-10 text-white">
+          <div
+            className={`text-xl ${
+              location?.pathname === link?.path
+                ? "text-white"
+                : "text-primary-10"
+            }`}
+          >
             {link?.icon}
           </div>
           {link?.label}
