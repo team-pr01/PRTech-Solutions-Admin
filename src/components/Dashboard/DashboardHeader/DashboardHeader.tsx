@@ -2,7 +2,6 @@
 import { useSelector } from "react-redux";
 import { useCurrentUser } from "../../../redux/Features/Auth/authSlice";
 import DashboardHamburgerMenu from "../DashboardHamburgerMenu/DashboardHamburgerMenu";
-import UserProfileDropdown from "./UserProfileDropdown/UserProfileDropdown";
 
 const DashboardHeader = () => {
   const user = useSelector(useCurrentUser) as any;
@@ -18,15 +17,6 @@ const DashboardHeader = () => {
         <p className="text-neutral-45 text-sm md:text-base">
           Welcome back, {user?.name}!
         </p>
-      </div>
-
-      <div className="flex items-center gap-5">
-        {/* Notification */}
-
-        {/* Profile Picture */}
-        {user && user.role !== "admin" && user.role !== "staff" && (
-          <UserProfileDropdown user={user} />
-        )}
       </div>
     </div>
   );

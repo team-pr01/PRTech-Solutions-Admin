@@ -17,7 +17,7 @@ const userApi = baseApi.injectEndpoints({
         body: data,
         method: "PATCH",
       }),
-      invalidatesTags: ["users", "tutor", "guardian", "staff"],
+      invalidatesTags: ["users"],
     }),
 
     deleteAccount: builder.mutation({
@@ -26,7 +26,7 @@ const userApi = baseApi.injectEndpoints({
         body: data,
         method: "PATCH",
       }),
-      invalidatesTags: ["users", "tutor", "guardian", "staff"],
+      invalidatesTags: ["users"],
     }),
 
     restoreDeletedAccount: builder.mutation({
@@ -34,7 +34,7 @@ const userApi = baseApi.injectEndpoints({
         url: `/user/account/restore/${id}`,
         method: "PATCH",
       }),
-      invalidatesTags: ["users", "tutor", "guardian", "staff"],
+      invalidatesTags: ["users"],
     }),
 
     suspendUser: builder.mutation({
@@ -43,7 +43,7 @@ const userApi = baseApi.injectEndpoints({
         body: data,
         method: "PATCH",
       }),
-      invalidatesTags: ["users", "tutor", "guardian"],
+      invalidatesTags: ["users"],
     }),
 
     activeUser: builder.mutation({
@@ -51,7 +51,7 @@ const userApi = baseApi.injectEndpoints({
         url: `/user/active/${userId}`,
         method: "PATCH",
       }),
-      invalidatesTags: ["users", "tutor", "guardian"],
+      invalidatesTags: ["users"],
     }),
 
     requestToUnlockProfile: builder.mutation({
@@ -60,7 +60,7 @@ const userApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: data,
       }),
-      invalidatesTags: ["tutor", "guardian", "users"],
+      invalidatesTags: ["users"],
     }),
 
     toggleProfileStatus: builder.mutation({
@@ -68,18 +68,18 @@ const userApi = baseApi.injectEndpoints({
         url: `/user/profile-lock/${id}`,
         method: "PATCH",
       }),
-      invalidatesTags: ["tutor", "guardian", "users"],
+      invalidatesTags: ["users"],
     }),
 
     giveRating: builder.mutation({
-      query: ({data, id}) => ({
+      query: ({ data, id }) => ({
         url: `/user/give-rating/${id}`,
         body: data,
         method: "PATCH",
       }),
-      invalidatesTags: ["tutor", "guardian", "users"],
+      invalidatesTags: ["users"],
     }),
   }),
 });
 
-export const {  useGetMeQuery, useUpdateProfileMutation, useDeleteAccountMutation, useRestoreDeletedAccountMutation, useSuspendUserMutation, useActiveUserMutation, useRequestToUnlockProfileMutation, useToggleProfileStatusMutation , useGiveRatingMutation} = userApi;
+export const { useGetMeQuery, useUpdateProfileMutation, useDeleteAccountMutation, useRestoreDeletedAccountMutation, useSuspendUserMutation, useActiveUserMutation, useRequestToUnlockProfileMutation, useToggleProfileStatusMutation, useGiveRatingMutation } = userApi;

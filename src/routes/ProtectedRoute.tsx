@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Navigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useCurrentUser } from "../redux/Features/Auth/authSlice";
-import type { TLoggedInUser } from "../types/loggedinUser.types";
 import type { ReactNode } from "react";
 
 interface ProtectedRouteProps {
@@ -9,7 +9,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const user = useSelector(useCurrentUser) as TLoggedInUser | null;
+  const user = useSelector(useCurrentUser) as any;
   const location = useLocation();
 
   // Redirect unauthenticated users trying to access dashboard
