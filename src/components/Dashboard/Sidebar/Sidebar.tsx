@@ -19,7 +19,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="top-0 left-0 hidden xl:block">
+    <div className="top-0 left-0 hidden xl:block h-screen">
       <div className="w-[230px] 2xl:w-[270px] h-full bg-white font-Nunito flex flex-col gap-5">
         <Link
           to="/dashboard/admin/home"

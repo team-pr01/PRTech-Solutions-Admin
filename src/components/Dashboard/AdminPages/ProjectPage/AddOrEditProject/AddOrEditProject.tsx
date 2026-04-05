@@ -129,8 +129,12 @@ const AddOrEditProject = ({
   const paymentMethodOptions = [
     "Bank Transfer",
     "Cash",
-    "Credit Card",
+    "bKash",
+    "Nagad",
+    "PhonePe",
+    "Google Pay",
     "PayPal",
+    "Payoneer",
     "Other",
   ];
 
