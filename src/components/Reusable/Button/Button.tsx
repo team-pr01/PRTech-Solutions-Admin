@@ -19,7 +19,7 @@ interface ButtonProps {
 
 const variantClasses: Record<string, string> = {
   primary: "bg-primary-10 border border-primary-10 text-white",
-  secondary: "bg-white text-black border border-black",
+  secondary: "bg-white text-black border border-primary-10 text-primary-10",
   tertiary:
     "bg-white text-primary-10 border border-primary-10 hover:bg-primary-10 hover:text-white",
   quaternary:
@@ -66,7 +66,7 @@ const Button: React.FC<ButtonProps> = ({
     </style>
   ) : null;
 
-  const baseClasses = `flex items-center gap-2 text-lg leading-[24px] w-fit rounded-lg font-semibold font-Nunito transition-all duration-300 py-2 px-3 text-sm md:text-base ${
+  const baseClasses = `flex items-center gap-2 text-lg leading-[24px] w-fit rounded-lg font-semibold font-Nunito transition-all duration-300 py-2 px-3 text-sm ${
     isDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
   } ${animationBaseClasses}`;
 

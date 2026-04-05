@@ -129,7 +129,7 @@ export default function Table<T extends Record<string, any>>({
     <div
       className={`w-full bg-white rounded-lg shadow-sm p-4 font-Nunito ${className}`}
     >
-      <div className="flex flex-col lg:flex-row items-start justify-between gap-4 mb-4">
+      <div className="flex flex-wrap flex-col lg:flex-row items-start justify-between gap-4 mb-4">
         <div>
           {title && <h3 className="text-xl font-semibold">{title}</h3>}
           {description && (

@@ -10,6 +10,7 @@ import Clients from "../pages/Dashboard/Admin/Clients/Clients";
 import ClientDetails from "../pages/Dashboard/Admin/Clients/ClientDetails";
 import Projects from './../pages/Dashboard/Admin/Projects/Projects';
 import ProjectDetails from "../pages/Dashboard/Admin/Projects/ProjectDetails";
+import Leads from "../pages/Dashboard/Leads/Leads";
 
 export const router = createBrowserRouter([
   // Main layout routes
@@ -53,6 +54,10 @@ export const router = createBrowserRouter([
       {
         path: "project/:id",
         element: <ProjectDetails />,
+      },
+      {
+        path: "leads",
+        element: <Leads />,
       },
 
       {
