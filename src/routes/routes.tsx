@@ -11,6 +11,7 @@ import ClientDetails from "../pages/Dashboard/Admin/Clients/ClientDetails";
 import Projects from './../pages/Dashboard/Admin/Projects/Projects';
 import ProjectDetails from "../pages/Dashboard/Admin/Projects/ProjectDetails";
 import Leads from "../pages/Dashboard/Leads/Leads";
+import LeadDetails from "../pages/Dashboard/Leads/LeadDetails";
 
 export const router = createBrowserRouter([
   // Main layout routes
@@ -58,6 +59,10 @@ export const router = createBrowserRouter([
       {
         path: "leads",
         element: <Leads />,
+      },
+      {
+        path: "lead/:id",
+        element: <LeadDetails />,
       },
 
       {

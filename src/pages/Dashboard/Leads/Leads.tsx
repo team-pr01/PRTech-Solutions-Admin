@@ -315,7 +315,7 @@ const Leads = () => {
       label: "View Details",
       icon: <FiEye className="inline text-blue-600" />,
       onClick: (row: any) => {
-        navigate(`/dashboard/admin/leads/${row._id}`);
+        navigate(`/dashboard/admin/lead/${row._id}`);
       },
     },
     {
