@@ -27,6 +27,7 @@ import ViewFollowUps from "../../../components/Dashboard/LeadPage/ViewFollowUps/
 import Button from "../../../components/Reusable/Button/Button";
 import Category from "../../../components/Reusable/Category/Category";
 import { useGetAllCategoriesByAreaNameQuery } from "../../../redux/Features/Categories/categoriesApi";
+import AddOrEditLead from "../../../components/Dashboard/LeadPage/AddOrEditLead/AddOrEditLead";
 
 const Leads = () => {
   const navigate = useNavigate();
@@ -133,8 +134,6 @@ const Leads = () => {
     return formatDate(nextFollowUp.followUpDate);
   };
 
-  console.log(data);
-
   // Format table data
   const tableData = data?.data?.data?.map((lead: any) => ({
     ...lead,
@@ -144,6 +143,11 @@ const Leads = () => {
     businessInfo: (
       <div className="space-y-1">
         <p className="font-semibold text-gray-800">{lead.businessName}</p>
+        {lead.businessContactNumber !== lead.ownerContactNumber && (
+          <p className="text-xs text-gray-500">
+            Business: {lead.businessContactNumber}
+          </p>
+        )}
         {lead.website && (
           <a
             href={lead.website}
@@ -169,11 +173,11 @@ const Leads = () => {
     contactInfo: (
       <div className="space-y-1">
         <p className="text-sm text-gray-700">
-          <span className="font-medium">Owner:</span> {lead.ownerName}
+          <span className="font-medium">Owner:</span> {lead.ownerName || "N/A"}
         </p>
         <div className="flex items-center gap-1 text-sm text-gray-600">
           <FiPhone size={12} className="text-gray-400" />
-          <span>{lead.ownerContactNumber}</span>
+          <span>{lead.ownerContactNumber || "N/A"}</span>
           {lead.isWhatsapp && (
             <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
               WhatsApp
@@ -185,11 +189,6 @@ const Leads = () => {
             <FiMail size={12} className="text-gray-400" />
             <span className="truncate max-w-[150px]">{lead.ownerEmail}</span>
           </div>
-        )}
-        {lead.businessContactNumber !== lead.ownerContactNumber && (
-          <p className="text-xs text-gray-500">
-            Bus: {lead.businessContactNumber}
-          </p>
         )}
       </div>
     ),
@@ -323,7 +322,9 @@ const Leads = () => {
       label: "Edit Lead",
       icon: <FiEdit2 className="inline text-green-600" />,
       onClick: (row: any) => {
-        navigate(`/dashboard/admin/leads/edit/${row._id}`);
+        setSelectedLeadId(row?._id);
+        setModalType("edit");
+        setIsAddOrEditLeadModalOpen(true);
       },
     },
     {
@@ -435,7 +436,7 @@ const Leads = () => {
 
   // Combine filters
   const filters = (
-    <div className="flex flex-wrap gap-2">
+    <>
       {statusFilterDropdown}
       {priorityFilterDropdown}
       {countryFilterInput}
@@ -480,7 +481,14 @@ const Leads = () => {
         }}
         label={"Clear Filters"}
       />
-    </div>
+      <Button
+        onClick={() => {
+          setModalType("add");
+          setIsAddOrEditLeadModalOpen(true);
+        }}
+        label={"Add Lead"}
+      />
+    </>
   );
 
   return (
@@ -534,6 +542,19 @@ const Leads = () => {
           leadId={selectedLeadId}
           followUps={selectedLead?.followUps || []}
           onClose={() => setIsViewFollowUpsOpen(false)}
+        />
+      </Modal>
+
+      <Modal
+        heading={modalType === "add" ? "Add Lead" : "Edit Lead"}
+        isModalOpen={isAddOrEditLeadModalOpen}
+        setIsModalOpen={setIsAddOrEditLeadModalOpen}
+      >
+        <AddOrEditLead
+          leadId={selectedLeadId}
+          modalType={modalType}
+          onClose={() => setIsAddOrEditLeadModalOpen(false)}
+          categories={categories?.data}
         />
       </Modal>
     </div>
