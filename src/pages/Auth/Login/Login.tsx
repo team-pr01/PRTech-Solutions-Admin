@@ -41,12 +41,13 @@ const Login = () => {
       if (res?.data?.user?.role === "admin") {
         navigate("/dashboard/admin/home");
       } else if (res?.data?.user?.role === "staff") {
-        navigate("/dashboard/staff/home");
+        navigate("/dashboard/staff/leads");
       } else {
         navigate("/");
       }
       reset();
     } catch (error: any) {
+      console.log(error);
       toast.error(error?.data?.message || "Login failed. Please try again.");
     }
   };

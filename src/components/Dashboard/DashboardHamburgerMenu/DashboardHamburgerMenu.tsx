@@ -41,7 +41,7 @@ const DashboardHamburgerMenu = () => {
     Cookies.remove("role");
     dispatch(logout());
     localStorage.clear();
-    navigate("/signin");
+    navigate("/");
   };
 
   return (

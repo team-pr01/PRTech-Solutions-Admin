@@ -14,13 +14,11 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   // Redirect unauthenticated users trying to access dashboard
   if (!user && location.pathname.startsWith("/dashboard")) {
-    return <Navigate to="/signin" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // Role-based access map
   const roleAccess: Record<string, string> = {
-    tutor: "/dashboard/tutor",
-    guardian: "/dashboard/guardian",
     admin: "/dashboard/admin",
     staff: "/dashboard/staff",
   };

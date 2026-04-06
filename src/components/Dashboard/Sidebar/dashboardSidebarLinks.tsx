@@ -44,8 +44,8 @@ export const adminDashboardLinks: DashboardLink[] = [
 
 export const staffDashboardLinks: DashboardLink[] = [
   {
-    label: "Dashboard",
-    path: "/dashboard/staff/home",
-    icon: <LuLayoutDashboard />,
+    label: "Leads",
+    path: "/dashboard/staff/leads",
+    icon: <FiTrendingUp />,
   },
 ];

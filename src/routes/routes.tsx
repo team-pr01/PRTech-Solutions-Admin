@@ -81,4 +81,26 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  // Staff dashboard routes
+  {
+    path: "dashboard/staff",
+    element: (
+      <ProtectedRoute>
+        <DashboardLayout />
+      </ProtectedRoute>
+    ),
+    errorElement: <ErrorComponent />,
+    children: [
+      
+      {
+        path: "leads",
+        element: <Leads />,
+      },
+
+      {
+        path: "*",
+        element: <NotFound />,
+      },
+    ],
+  },
 ]);

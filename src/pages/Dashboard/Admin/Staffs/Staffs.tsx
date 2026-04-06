@@ -67,19 +67,18 @@ const Staffs = () => {
 
   // Table headers
   const staffTheads: TableHead[] = [
-    { key: "staffId", label: "ID" },
     { key: "name", label: "Name" },
     { key: "email", label: "Email" },
     { key: "phoneNumber", label: "Phone Number" },
     { key: "gender", label: "Gender" },
     { key: "location", label: "Location" },
     { key: "jobRole", label: "Job Role" },
+    { key: "pagesAssigned", label: "Pages Assigned" },
     { key: "joinedDate", label: "Joined Date" },
   ];
 
   const tableData = allStaffs?.data?.staffs?.map((staff: any) => ({
     _id: staff?._id || "N/A",
-    staffId: staff?.staffId || "N/A",
     userId: staff?.userId?._id,
     name: staff?.userId?.name,
     email: staff?.userId?.email,
@@ -93,18 +92,30 @@ const Staffs = () => {
         {staff?.userId?.city && (
           <p className="text-xs text-gray-500">{staff?.userId?.city}</p>
         )}
-        {staff?.userId?.address && (
-          <p
-            className="text-xs text-gray-500 truncate max-w-[150px]"
-            title={staff?.userId?.address}
-          >
-            {staff?.userId?.address}
-          </p>
-        )}
       </div>
     ),
     jobRole: staff?.jobRole,
-    pagesAssigned: staff?.pagesAssigned,
+    pagesAssigned: (
+      <div className="flex flex-wrap gap-1">
+        {staff?.pagesAssigned && staff.pagesAssigned.length > 0 ? (
+          staff.pagesAssigned.slice(0, 3).map((page: string, index: number) => (
+            <span
+              key={index}
+              className="inline-block px-2 py-0.5 text-xs bg-blue-100 text-blue-700 rounded"
+            >
+              {page}
+            </span>
+          ))
+        ) : (
+          <span className="text-gray-400">No pages assigned</span>
+        )}
+        {staff?.pagesAssigned?.length > 3 && (
+          <span className="inline-block px-2 py-0.5 text-xs bg-gray-100 text-gray-600 rounded">
+            +{staff.pagesAssigned.length - 3} more
+          </span>
+        )}
+      </div>
+    ),
     joinedDate: formatDate(staff?.createdAt),
   }));
 
