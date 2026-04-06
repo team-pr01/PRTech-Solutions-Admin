@@ -12,7 +12,7 @@ const Modal: React.FC<TModalProps> = ({
   isModalOpen,
   setIsModalOpen,
   children,
-  width = "w-[90%] sm:w-[60%] lg:w-[50%] xl:w-[40%] 2xl:w-[25%]",
+  width = "w-[90%] sm:w-[60%] lg:w-[50%] xl:w-[40%]",
 }) => {
   return (
     <div
