@@ -95,7 +95,7 @@ const Leads = () => {
     { key: "contactInfo", label: "Contact Info" },
     { key: "location", label: "Location" },
     { key: "priority", label: "Priority" },
-    { key: "category", label: "Category" },
+    { key: "category", label: "Niche" },
     { key: "nextFollowUp", label: "Next Follow Up" },
     { key: "status", label: "Status" },
     { key: "createdAt", label: "Created Date" },
@@ -461,14 +461,14 @@ const Leads = () => {
         onChange={(e) => setCategory(e.target.value)}
         className="input input-sm px-3 py-2 border border-neutral-55/60 focus:border-primary-10 transition duration-300 focus:outline-none rounded-md text-sm shadow-sm cursor-pointer"
       >
-        <option value="">All Categories </option>
+        <option value="">All Niches </option>
         {categories?.data?.map((category: any) => (
           <option key={category?.category} value={category?.category}>
             {category?.category}
           </option>
         ))}
       </select>
-      <Category areaName="Lead" />
+      <Category label="Manage Niche" areaName="Lead" />
       <Button
         onClick={() => {
           setStatusFilter("");

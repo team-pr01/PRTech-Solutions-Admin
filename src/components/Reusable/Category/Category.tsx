@@ -19,8 +19,9 @@ export type TCategories = {
 
 type TCategoryProps = {
   areaName: string;
+  label?: string;
 };
-const Category: React.FC<TCategoryProps> = ({ areaName }) => {
+const Category: React.FC<TCategoryProps> = ({ areaName, label }) => {
   const { data, isLoading } = useGetAllCategoriesByAreaNameQuery(areaName);
   const [isCategoryModalOpen, setIsCategoryModalOpen] =
     useState<boolean>(false);
@@ -45,7 +46,7 @@ const Category: React.FC<TCategoryProps> = ({ areaName }) => {
     <div>
       <Button
         variant="secondary"
-        label="Manage Categories"
+        label={label || "Manage Categories"}
         onClick={() => {
           setIsCategoryModalOpen(true);
         }}
@@ -56,7 +57,7 @@ const Category: React.FC<TCategoryProps> = ({ areaName }) => {
         <Modal
           isModalOpen={isCategoryModalOpen}
           setIsModalOpen={setIsCategoryModalOpen}
-          heading={`Category`}
+          heading={label || `Category`}
         >
           <div className="relative">
             {isLoading && (

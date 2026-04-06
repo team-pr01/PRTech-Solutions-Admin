@@ -48,8 +48,8 @@ const AddCategoryForm: React.FC<TAddCategoryFormProps> = ({
       <div className="flex flex-col gap-6">
         {/* Title */}
         <TextInput
-          label="Category"
-          placeholder="Enter category"
+          label="Niche"
+          placeholder="ex: gym, fashion etc"
           error={errors.category}
           {...register("category", { required: "Category is required" })}
         />
