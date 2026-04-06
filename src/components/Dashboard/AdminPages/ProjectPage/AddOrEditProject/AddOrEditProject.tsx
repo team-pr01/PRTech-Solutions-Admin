@@ -124,7 +124,7 @@ const AddOrEditProject = ({
 
   const statusOptions = ["Yet to Start", "Ongoing", "On Hold", "Completed"];
 
-  const currencyOptions = ["USD", "EUR", "GBP", "BDT", "INR", "Other"];
+  const currencyOptions = ["BDT", "INR", "USD", "Other"];
 
   const paymentMethodOptions = [
     "Bank Transfer",
@@ -226,8 +226,8 @@ const AddOrEditProject = ({
         }
       } else {
         const result = await updateProject({
-          projectId: id!,
-          body: payload,
+          id: id!,
+          data: payload,
         }).unwrap();
         if (result.success) {
           toast.success("Project updated successfully");

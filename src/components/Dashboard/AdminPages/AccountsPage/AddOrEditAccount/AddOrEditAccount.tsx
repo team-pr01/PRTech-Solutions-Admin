@@ -27,6 +27,7 @@ type AccountFormData = {
   paidBy?: string;
   paymentMethod: string;
   date: string;
+  note?: string;
 };
 
 type AddOrEditAccountProps = {
@@ -90,6 +91,7 @@ const AddOrEditAccount = ({
         date: account.date
           ? new Date(account.date).toISOString().split("T")[0]
           : "",
+        note: account.note || "",
       });
     } else {
       reset({
@@ -102,6 +104,7 @@ const AddOrEditAccount = ({
         paidBy: "",
         paymentMethod: "",
         date: "",
+        note: "",
       });
     }
   }, [modalType, accountData, reset]);
@@ -113,6 +116,7 @@ const AddOrEditAccount = ({
         paidAmount: Number(data.paidAmount),
         totalAmount: Number(data.totalAmount),
         date: new Date(data.date).toISOString(),
+        note: data.note || null,
       };
 
       if (modalType === "add") {
@@ -240,6 +244,15 @@ const AddOrEditAccount = ({
         type="date"
         error={errors.date}
         {...register("date", { required: "Date is required" })}
+      />
+
+      {/* Note */}
+      <TextInput
+        label="Note"
+        placeholder="ex:1st Installment"
+        error={errors.note}
+        {...register("note")}
+        isRequired={false}
       />
 
       {/* Info Box */}

@@ -52,6 +52,15 @@ const accountsApi = baseApi.injectEndpoints({
       providesTags: ["account"],
     }),
 
+    getAccountSummary: builder.query({
+      query: () => ({
+        url: `/account/summary`,
+        method: "GET",
+        credentials: "include",
+      }),
+      providesTags: ["account"],
+    }),
+
     addAccount: builder.mutation<any, any>({
       query: (data) => ({
         url: `/account/add`,
@@ -86,6 +95,7 @@ const accountsApi = baseApi.injectEndpoints({
 export const {
   useGetAllAccountsQuery,
   useGetSingleAccountByIdQuery,
+  useGetAccountSummaryQuery,
   useAddAccountMutation,
   useUpdateAccountMutation,
   useDeleteAccountMutation,

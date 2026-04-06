@@ -5,8 +5,13 @@ import {
   FiTrash2,
   FiTrendingUp,
   FiTrendingDown,
+  FiDollarSign,
+  FiClock,
 } from "react-icons/fi";
-import { useGetAllAccountsQuery } from "../../../../redux/Features/Accounts/accountsApi";
+import {
+  useGetAccountSummaryQuery,
+  useGetAllAccountsQuery,
+} from "../../../../redux/Features/Accounts/accountsApi";
 import { useDeleteAccountMutation } from "../../../../redux/Features/User/userApi";
 import toast from "react-hot-toast";
 import { formatDate } from "../../../../utils/formatDate";
@@ -34,7 +39,10 @@ const Accounts = () => {
     keyword: searchQuery,
     type: typeFilter,
     expenseType: expenseTypeFilter,
+    date,
   });
+
+  const { data: accountSummary } = useGetAccountSummaryQuery({});
 
   const [deleteAccount] = useDeleteAccountMutation();
 
@@ -75,6 +83,9 @@ const Accounts = () => {
 
   // Format currency
   const formatCurrency = (amount: number, currency: string) => {
+    if (!currency || currency === "earnings" || currency === "expenses") {
+      return `${currency} ${amount.toLocaleString()}`;
+    }
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: currency,
@@ -91,9 +102,9 @@ const Accounts = () => {
     description: (
       <div className="space-y-1">
         <p className="font-medium text-gray-800">{account.description}</p>
-        {account.notes && (
+        {account.note && (
           <p className="text-xs text-gray-500 truncate max-w-[200px]">
-            {account.notes}
+            {account.note}
           </p>
         )}
       </div>
@@ -182,12 +193,15 @@ const Accounts = () => {
     setShowModal(true);
   };
 
+  // Get summary data
+  const summary = accountSummary?.data || {};
+
   // Filters
   const typeFilterDropdown = (
     <select
       value={typeFilter}
       onChange={(e) => setTypeFilter(e.target.value)}
-     className="input input-sm px-3 py-2 border border-neutral-55/60 focus:border-primary-10 transition duration-300 focus:outline-none rounded-md text-sm shadow-sm cursor-pointer"
+      className="input input-sm px-3 py-2 border border-neutral-55/60 focus:border-primary-10 transition duration-300 focus:outline-none rounded-md text-sm shadow-sm cursor-pointer"
     >
       <option value="">All Types</option>
       <option value="earning">Earning</option>
@@ -212,13 +226,12 @@ const Accounts = () => {
     </select>
   );
 
-  const dateRangeFilters = (
+  const dateFilter = (
     <input
       type="date"
       value={date}
       onChange={(e) => setDate(e.target.value)}
       className="input input-sm px-3 py-2 border border-neutral-55/60 focus:border-primary-10 transition duration-300 focus:outline-none rounded-md text-sm shadow-sm"
-      placeholder="From"
     />
   );
 
@@ -226,17 +239,191 @@ const Accounts = () => {
     <div className="flex flex-wrap gap-2">
       {typeFilterDropdown}
       {expenseTypeFilterDropdown}
-      {dateRangeFilters}
-      <Button
-        onClick={handleAddAccount}
-        label="Add Transaction"
-      />
+      {dateFilter}
+      <Button onClick={handleAddAccount} label="Add Transaction" />
     </div>
   );
 
   return (
-    <div>
-      {/* Table Accounts*/}
+    <div className="space-y-6">
+      {/* KPI Cards - BDT Section */}
+      <div className="space-y-3">
+        <h3 className="text-lg font-semibold text-gray-800">BDT Summary</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Earnings Card BDT */}
+          <div className="bg-green-50 rounded-xl p-6 border border-green-200">
+            <div className="flex justify-between items-start mb-2">
+              <p className="text-sm text-gray-600">Total Earnings</p>
+              <FiTrendingUp className="text-green-600" size={20} />
+            </div>
+            <p className="text-2xl font-bold text-green-600">
+              ৳ {summary?.BDT?.earnings?.total?.toLocaleString() || 0}
+            </p>
+            <div className="mt-2 text-xs text-gray-500">
+              <span>
+                Paid: ৳ {summary?.BDT?.earnings?.paid?.toLocaleString() || 0}
+              </span>
+              <span className="ml-2">
+                Pending: ৳{" "}
+                {summary?.BDT?.earnings?.pending?.toLocaleString() || 0}
+              </span>
+            </div>
+          </div>
+
+          {/* Expenses Card BDT */}
+          <div className="bg-red-50 rounded-xl p-6 border border-red-200">
+            <div className="flex justify-between items-start mb-2">
+              <p className="text-sm text-gray-600">Total Expenses</p>
+              <FiTrendingDown className="text-red-600" size={20} />
+            </div>
+            <p className="text-2xl font-bold text-red-600">
+              ৳ {summary?.BDT?.expenses?.total?.toLocaleString() || 0}
+            </p>
+            <div className="mt-2 text-xs text-gray-500">
+              <span>
+                Paid: ৳ {summary?.BDT?.expenses?.paid?.toLocaleString() || 0}
+              </span>
+              <span className="ml-2">
+                Pending: ৳{" "}
+                {summary?.BDT?.expenses?.pending?.toLocaleString() || 0}
+              </span>
+            </div>
+          </div>
+
+          {/* Balance Card BDT */}
+          <div
+            className={`${summary?.BDT?.balance >= 0 ? "bg-blue-50 border-blue-200" : "bg-orange-50 border-orange-200"} rounded-xl p-6 border`}
+          >
+            <div className="flex justify-between items-start mb-2">
+              <p className="text-sm text-gray-600">Net Balance</p>
+              <FiDollarSign
+                className={
+                  summary?.BDT?.balance >= 0
+                    ? "text-blue-600"
+                    : "text-orange-600"
+                }
+                size={20}
+              />
+            </div>
+            <p
+              className={`text-2xl font-bold ${summary?.BDT?.balance >= 0 ? "text-blue-600" : "text-orange-600"}`}
+            >
+              ৳ {Math.abs(summary?.BDT?.balance || 0).toLocaleString()}
+              {summary?.BDT?.balance < 0 && (
+                <span className="text-sm ml-1">(Negative)</span>
+              )}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* KPI Cards - INR Section */}
+      <div className="space-y-3 mt-6">
+        <h3 className="text-lg font-semibold text-gray-800">INR Summary</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Earnings Card INR */}
+          <div className="bg-green-50 rounded-xl p-6 border border-green-200">
+            <div className="flex justify-between items-start mb-2">
+              <p className="text-sm text-gray-600">Total Earnings</p>
+              <FiTrendingUp className="text-green-600" size={20} />
+            </div>
+            <p className="text-2xl font-bold text-green-600">
+              ₹ {summary?.INR?.earnings?.total?.toLocaleString() || 0}
+            </p>
+            <div className="mt-2 text-xs text-gray-500">
+              <span>
+                Paid: ₹ {summary?.INR?.earnings?.paid?.toLocaleString() || 0}
+              </span>
+              <span className="ml-2">
+                Pending: ₹{" "}
+                {summary?.INR?.earnings?.pending?.toLocaleString() || 0}
+              </span>
+            </div>
+          </div>
+
+          {/* Expenses Card INR */}
+          <div className="bg-red-50 rounded-xl p-6 border border-red-200">
+            <div className="flex justify-between items-start mb-2">
+              <p className="text-sm text-gray-600">Total Expenses</p>
+              <FiTrendingDown className="text-red-600" size={20} />
+            </div>
+            <p className="text-2xl font-bold text-red-600">
+              ₹ {summary?.INR?.expenses?.total?.toLocaleString() || 0}
+            </p>
+            <div className="mt-2 text-xs text-gray-500">
+              <span>
+                Paid: ₹ {summary?.INR?.expenses?.paid?.toLocaleString() || 0}
+              </span>
+              <span className="ml-2">
+                Pending: ₹{" "}
+                {summary?.INR?.expenses?.pending?.toLocaleString() || 0}
+              </span>
+            </div>
+          </div>
+
+          {/* Balance Card INR */}
+          <div
+            className={`${summary?.INR?.balance >= 0 ? "bg-blue-50 border-blue-200" : "bg-orange-50 border-orange-200"} rounded-xl p-6 border`}
+          >
+            <div className="flex justify-between items-start mb-2">
+              <p className="text-sm text-gray-600">Net Balance</p>
+              <FiDollarSign
+                className={
+                  summary?.INR?.balance >= 0
+                    ? "text-blue-600"
+                    : "text-orange-600"
+                }
+                size={20}
+              />
+            </div>
+            <p
+              className={`text-2xl font-bold ${summary?.INR?.balance >= 0 ? "text-blue-600" : "text-orange-600"}`}
+            >
+              ₹ {Math.abs(summary?.INR?.balance || 0).toLocaleString()}
+              {summary?.INR?.balance < 0 && (
+                <span className="text-sm ml-1">(Negative)</span>
+              )}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Pending Amounts Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+        {/* Pending Earnings */}
+        <div className="bg-yellow-50 rounded-xl p-6 border border-yellow-200">
+          <div className="flex justify-between items-start mb-2">
+            <p className="text-sm text-gray-600">Pending Earnings</p>
+            <FiClock className="text-yellow-600" size={20} />
+          </div>
+          <div className="space-y-1">
+            <p className="text-md font-medium">
+              BDT: ৳ {summary?.BDT?.earnings?.pending?.toLocaleString() || 0}
+            </p>
+            <p className="text-md font-medium">
+              INR: ₹ {summary?.INR?.earnings?.pending?.toLocaleString() || 0}
+            </p>
+          </div>
+        </div>
+
+        {/* Pending Expenses */}
+        <div className="bg-orange-50 rounded-xl p-6 border border-orange-200">
+          <div className="flex justify-between items-start mb-2">
+            <p className="text-sm text-gray-600">Pending Expenses</p>
+            <FiClock className="text-orange-600" size={20} />
+          </div>
+          <div className="space-y-1">
+            <p className="text-md font-medium">
+              BDT: ৳ {summary?.BDT?.expenses?.pending?.toLocaleString() || 0}
+            </p>
+            <p className="text-md font-medium">
+              INR: ₹ {summary?.INR?.expenses?.pending?.toLocaleString() || 0}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Table */}
       <Table
         title="All Transactions"
         description="Manage your earnings and expenses"
