@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FiEdit2,
   FiTrash2,
   FiTrendingUp,
   FiTrendingDown,
-  FiDollarSign,
   FiClock,
 } from "react-icons/fi";
 import {
@@ -19,6 +18,19 @@ import Button from "../../../../components/Reusable/Button/Button";
 import Table from "../../../../components/Reusable/Table/Table";
 import AddOrEditAccount from "../../../../components/Dashboard/AdminPages/AccountsPage/AddOrEditAccount/AddOrEditAccount";
 import Modal from "../../../../components/Reusable/Modal/Modal";
+import "react-circular-progressbar/dist/styles.css";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import { FiTarget, FiCalendar } from "react-icons/fi";
+import AccountKPICard from "../../../../components/Dashboard/AccountsPage/AccountKPICard/AccountKPICard";
 
 const Accounts = () => {
   const [page, setPage] = useState<number>(1);
@@ -244,181 +256,375 @@ const Accounts = () => {
     </div>
   );
 
+  // Add after the summary constant
+  const targetAmount = 5000000; // 50 lac BDT
+  const currentEarnings = summary?.BDT?.earnings?.total || 0;
+  const progressPercentage = Math.min(
+    Math.floor((currentEarnings / targetAmount) * 100),
+    100,
+  );
+  const remainingAmount = Math.max(targetAmount - currentEarnings, 0);
+
+  // Time remaining calculation
+  const targetDate = new Date(2027, 11, 31); // Dec 31, 2027
+  const now = new Date();
+  const diffTime = targetDate.getTime() - now.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const monthsRemaining = Math.floor(diffDays / 30);
+  const daysRemaining = diffDays % 30;
+
+  let timeRemaining = "";
+  if (monthsRemaining > 0) {
+    timeRemaining = `${monthsRemaining} month${monthsRemaining > 1 ? "s" : ""} ${daysRemaining > 0 ? `${daysRemaining} day${daysRemaining > 1 ? "s" : ""}` : ""}`;
+  } else {
+    timeRemaining = `${diffDays} day${diffDays !== 1 ? "s" : ""}`;
+  }
+  if (diffDays < 0) timeRemaining = "Target date passed";
+
+  // Monthly chart data - this should come from an API
+  // We'll create a placeholder and add a comment
+  const [monthlyData, setMonthlyData] = useState<any>([]);
+  // Fetch monthly summary from a new endpoint
+  useEffect(() => {
+    // Replace with actual API call
+    // fetchMonthlySummary().then(res => setMonthlyData(res.data));
+    // For now, use mock data
+    setMonthlyData([
+      { month: "Jan", earnings: 120000, expenses: 80000 },
+      { month: "Feb", earnings: 150000, expenses: 95000 },
+      { month: "Mar", earnings: 180000, expenses: 110000 },
+      { month: "Apr", earnings: 200000, expenses: 130000 },
+      { month: "May", earnings: 220000, expenses: 140000 },
+      { month: "Jun", earnings: 250000, expenses: 160000 },
+      { month: "Jul", earnings: 280000, expenses: 180000 },
+      { month: "Aug", earnings: 300000, expenses: 190000 },
+      { month: "Sep", earnings: 320000, expenses: 200000 },
+      { month: "Oct", earnings: 340000, expenses: 210000 },
+      { month: "Nov", earnings: 360000, expenses: 220000 },
+      { month: "Dec", earnings: 400000, expenses: 250000 },
+    ]);
+  }, []);
+
   return (
     <div className="space-y-6">
-      {/* KPI Cards - BDT Section */}
-      <div className="space-y-3">
-        <h3 className="text-lg font-semibold text-gray-800">BDT Summary</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Earnings Card BDT */}
-          <div className="bg-green-50 rounded-xl p-6 border border-green-200">
-            <div className="flex justify-between items-start mb-2">
-              <p className="text-sm text-gray-600">Total Earnings</p>
-              <FiTrendingUp className="text-green-600" size={20} />
-            </div>
-            <p className="text-2xl font-bold text-green-600">
-              ৳ {summary?.BDT?.earnings?.total?.toLocaleString() || 0}
-            </p>
-            <div className="mt-2 text-xs text-gray-500">
-              <span>
-                Paid: ৳ {summary?.BDT?.earnings?.paid?.toLocaleString() || 0}
-              </span>
-              <span className="ml-2">
-                Pending: ৳{" "}
-                {summary?.BDT?.earnings?.pending?.toLocaleString() || 0}
+      {/* KPI Cards - Dynamic Mapping */}
+      <div className="space-y-8">
+        {[
+          { currency: "BDT", symbol: "৳", data: summary?.BDT },
+          { currency: "INR", symbol: "₹", data: summary?.INR },
+        ].map((currencyItem) => (
+          <div key={currencyItem?.currency} className="space-y-4">
+            <div className="flex items-center gap-2">
+              <div className="w-1 h-6 bg-primary-10 rounded-full"></div>
+              <h3 className="text-lg font-semibold text-gray-800">
+                {currencyItem?.currency} Financial Summary
+              </h3>
+              <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                {currencyItem?.currency === "BDT"
+                  ? "Bangladeshi Taka"
+                  : "Indian Rupee"}
               </span>
             </div>
-          </div>
 
-          {/* Expenses Card BDT */}
-          <div className="bg-red-50 rounded-xl p-6 border border-red-200">
-            <div className="flex justify-between items-start mb-2">
-              <p className="text-sm text-gray-600">Total Expenses</p>
-              <FiTrendingDown className="text-red-600" size={20} />
-            </div>
-            <p className="text-2xl font-bold text-red-600">
-              ৳ {summary?.BDT?.expenses?.total?.toLocaleString() || 0}
-            </p>
-            <div className="mt-2 text-xs text-gray-500">
-              <span>
-                Paid: ৳ {summary?.BDT?.expenses?.paid?.toLocaleString() || 0}
-              </span>
-              <span className="ml-2">
-                Pending: ৳{" "}
-                {summary?.BDT?.expenses?.pending?.toLocaleString() || 0}
-              </span>
-            </div>
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {/* Earnings Card */}
+              <AccountKPICard
+                type="earnings"
+                currency={currencyItem?.currency}
+                currencySymbol={currencyItem?.symbol}
+                amount={currencyItem?.data?.earnings?.total}
+                paidAmount={currencyItem?.data?.earnings?.paid}
+                pendingAmount={currencyItem?.data?.earnings?.pending}
+              />
 
-          {/* Balance Card BDT */}
-          <div
-            className={`${summary?.BDT?.balance >= 0 ? "bg-blue-50 border-blue-200" : "bg-orange-50 border-orange-200"} rounded-xl p-6 border`}
-          >
-            <div className="flex justify-between items-start mb-2">
-              <p className="text-sm text-gray-600">Net Balance</p>
-              <FiDollarSign
-                className={
-                  summary?.BDT?.balance >= 0
-                    ? "text-blue-600"
-                    : "text-orange-600"
+              {/* Expenses Card */}
+              <AccountKPICard
+                type="expenses"
+                currency={currencyItem?.currency}
+                currencySymbol={currencyItem?.symbol}
+                amount={currencyItem?.data?.expenses?.total}
+                paidAmount={currencyItem?.data?.expenses?.paid}
+                pendingAmount={currencyItem?.data?.expenses?.pending}
+              />
+
+              {/* Balance Card */}
+              <AccountKPICard
+                type="balance"
+                currency={currencyItem?.currency}
+                currencySymbol={currencyItem?.symbol}
+                amount={Math.abs(currencyItem?.data?.balance)}
+                status={
+                  currencyItem?.data?.balance >= 0 ? "positive" : "negative"
                 }
-                size={20}
               />
             </div>
-            <p
-              className={`text-2xl font-bold ${summary?.BDT?.balance >= 0 ? "text-blue-600" : "text-orange-600"}`}
-            >
-              ৳ {Math.abs(summary?.BDT?.balance || 0).toLocaleString()}
-              {summary?.BDT?.balance < 0 && (
-                <span className="text-sm ml-1">(Negative)</span>
-              )}
-            </p>
+          </div>
+        ))}
+
+        {/* Compact Pending Summary */}
+        <div className="bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100 p-5">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-yellow-100 rounded-xl">
+                <FiClock className="text-yellow-600" size={20} />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Pending Earnings</p>
+                <div className="flex gap-4 mt-1">
+                  <span className="text-sm font-semibold text-gray-700">
+                    BDT: ৳{" "}
+                    {summary?.BDT?.earnings?.pending?.toLocaleString() || 0}
+                  </span>
+                  <span className="text-sm font-semibold text-gray-700">
+                    INR: ₹{" "}
+                    {summary?.INR?.earnings?.pending?.toLocaleString() || 0}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="w-px h-10 bg-gray-200 hidden md:block"></div>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-orange-100 rounded-xl">
+                <FiClock className="text-orange-600" size={20} />
+              </div>
+              <div>
+                <p className="text-sm text-gray-500">Pending Expenses</p>
+                <div className="flex gap-4 mt-1">
+                  <span className="text-sm font-semibold text-gray-700">
+                    BDT: ৳{" "}
+                    {summary?.BDT?.expenses?.pending?.toLocaleString() || 0}
+                  </span>
+                  <span className="text-sm font-semibold text-gray-700">
+                    INR: ₹{" "}
+                    {summary?.INR?.expenses?.pending?.toLocaleString() || 0}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* KPI Cards - INR Section */}
-      <div className="space-y-3 mt-6">
-        <h3 className="text-lg font-semibold text-gray-800">INR Summary</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Earnings Card INR */}
-          <div className="bg-green-50 rounded-xl p-6 border border-green-200">
-            <div className="flex justify-between items-start mb-2">
-              <p className="text-sm text-gray-600">Total Earnings</p>
-              <FiTrendingUp className="text-green-600" size={20} />
-            </div>
-            <p className="text-2xl font-bold text-green-600">
-              ₹ {summary?.INR?.earnings?.total?.toLocaleString() || 0}
-            </p>
-            <div className="mt-2 text-xs text-gray-500">
-              <span>
-                Paid: ₹ {summary?.INR?.earnings?.paid?.toLocaleString() || 0}
-              </span>
-              <span className="ml-2">
-                Pending: ₹{" "}
-                {summary?.INR?.earnings?.pending?.toLocaleString() || 0}
-              </span>
-            </div>
-          </div>
-
-          {/* Expenses Card INR */}
-          <div className="bg-red-50 rounded-xl p-6 border border-red-200">
-            <div className="flex justify-between items-start mb-2">
-              <p className="text-sm text-gray-600">Total Expenses</p>
-              <FiTrendingDown className="text-red-600" size={20} />
-            </div>
-            <p className="text-2xl font-bold text-red-600">
-              ₹ {summary?.INR?.expenses?.total?.toLocaleString() || 0}
-            </p>
-            <div className="mt-2 text-xs text-gray-500">
-              <span>
-                Paid: ₹ {summary?.INR?.expenses?.paid?.toLocaleString() || 0}
-              </span>
-              <span className="ml-2">
-                Pending: ₹{" "}
-                {summary?.INR?.expenses?.pending?.toLocaleString() || 0}
-              </span>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Goal Progress Section - Professional */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300">
+          {/* Header with gradient accent */}
+          <div className="bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="bg-white/20 p-2 rounded-lg">
+                  <FiTarget className="text-white" size={20} />
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold">Financial Goal</h3>
+                  <p className="text-white/80 text-sm">
+                    BDT 50 Lac by Dec 2027
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-white/70 text-xs">Target Date</p>
+                <p className="text-white font-medium text-sm">
+                  December 31, 2027
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* Balance Card INR */}
-          <div
-            className={`${summary?.INR?.balance >= 0 ? "bg-blue-50 border-blue-200" : "bg-orange-50 border-orange-200"} rounded-xl p-6 border`}
-          >
-            <div className="flex justify-between items-start mb-2">
-              <p className="text-sm text-gray-600">Net Balance</p>
-              <FiDollarSign
-                className={
-                  summary?.INR?.balance >= 0
-                    ? "text-blue-600"
-                    : "text-orange-600"
-                }
-                size={20}
-              />
+          <div className="p-6">
+            {/* Main Stats */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="text-center p-3 bg-blue-50 rounded-lg">
+                <p className="text-xs text-gray-500 mb-1">Achieved</p>
+                <p className="text-xl font-bold text-blue-600">
+                  ৳ {(currentEarnings / 100000).toFixed(1)}L
+                </p>
+                <p className="text-xs text-gray-400">
+                  {currentEarnings.toLocaleString()} BDT
+                </p>
+              </div>
+              <div className="text-center p-3 bg-orange-50 rounded-lg">
+                <p className="text-xs text-gray-500 mb-1">Remaining</p>
+                <p className="text-xl font-bold text-orange-600">
+                  ৳ {(remainingAmount / 100000).toFixed(1)}L
+                </p>
+                <p className="text-xs text-gray-400">
+                  {remainingAmount.toLocaleString()} BDT
+                </p>
+              </div>
             </div>
-            <p
-              className={`text-2xl font-bold ${summary?.INR?.balance >= 0 ? "text-blue-600" : "text-orange-600"}`}
-            >
-              ₹ {Math.abs(summary?.INR?.balance || 0).toLocaleString()}
-              {summary?.INR?.balance < 0 && (
-                <span className="text-sm ml-1">(Negative)</span>
-              )}
-            </p>
+
+            {/* Progress Bar with percentage */}
+            <div className="mb-4">
+              <div className="flex justify-between text-sm mb-2">
+                <span className="text-gray-600">Overall Progress</span>
+                <span className="font-semibold text-primary-10">
+                  {progressPercentage}%
+                </span>
+              </div>
+              <div className="relative">
+                <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-primary-10 to-primary-20 h-2 rounded-full transition-all duration-500"
+                    style={{ width: `${progressPercentage}%` }}
+                  />
+                </div>
+                {/* Milestone markers */}
+                <div className="absolute -bottom-4 left-0 right-0 flex justify-between px-1">
+                  {[25, 50, 75].map((mark) => (
+                    <div key={mark} className="relative">
+                      <div className="w-0.5 h-2 bg-gray-300"></div>
+                      <span className="text-xs text-gray-400 absolute -top-5 -translate-x-1/2">
+                        {mark}%
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Time & Stats */}
+            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-purple-50 rounded-lg">
+                  <FiCalendar className="text-purple-600" size={16} />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Time Left</p>
+                  <p className="font-semibold text-gray-800 text-sm">
+                    {timeRemaining}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    {daysRemaining} days remaining
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-green-50 rounded-lg">
+                  <FiTrendingUp className="text-green-600" size={16} />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Monthly Target</p>
+                  <p className="font-semibold text-gray-800 text-sm">
+                    ৳ {(targetAmount / 36).toLocaleString()}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    ~{(targetAmount / 36 / 100000).toFixed(1)}L per month
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Pending Amounts Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-        {/* Pending Earnings */}
-        <div className="bg-yellow-50 rounded-xl p-6 border border-yellow-200">
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-sm text-gray-600">Pending Earnings</p>
-            <FiClock className="text-yellow-600" size={20} />
+        {/* Monthly Chart Section - Professional */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-300 flex flex-col">
+          <div className="bg-gradient-to-r from-gray-50 to-white px-6 py-4 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="bg-primary-10/10 p-2 rounded-lg">
+                  <FiTrendingUp className="text-primary-10" size={20} />
+                </div>
+                <div>
+                  <h3 className="text-gray-800 font-semibold">
+                    Monthly Overview
+                  </h3>
+                  <p className="text-gray-500 text-sm">Earnings vs Expenses</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <span className="text-xs text-gray-600">Earnings</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                  <span className="text-xs text-gray-600">Expenses</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="space-y-1">
-            <p className="text-md font-medium">
-              BDT: ৳ {summary?.BDT?.earnings?.pending?.toLocaleString() || 0}
-            </p>
-            <p className="text-md font-medium">
-              INR: ₹ {summary?.INR?.earnings?.pending?.toLocaleString() || 0}
-            </p>
-          </div>
-        </div>
 
-        {/* Pending Expenses */}
-        <div className="bg-orange-50 rounded-xl p-6 border border-orange-200">
-          <div className="flex justify-between items-start mb-2">
-            <p className="text-sm text-gray-600">Pending Expenses</p>
-            <FiClock className="text-orange-600" size={20} />
+          <div className="p-4 flex-1">
+            <ResponsiveContainer width="100%" height={320}>
+              <LineChart
+                data={monthlyData}
+                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                <XAxis
+                  dataKey="month"
+                  tick={{ fill: "#6B7280", fontSize: 12 }}
+                  axisLine={{ stroke: "#E5E7EB" }}
+                />
+                <YAxis
+                  tick={{ fill: "#6B7280", fontSize: 12 }}
+                  axisLine={{ stroke: "#E5E7EB" }}
+                  tickFormatter={(value) => `৳${value / 1000}K`}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#FFFFFF",
+                    border: "1px solid #E5E7EB",
+                    borderRadius: "8px",
+                    padding: "8px 12px",
+                  }}
+                  formatter={(value: number) => [
+                    `৳ ${value.toLocaleString()}`,
+                    "",
+                  ]}
+                />
+                <Legend wrapperStyle={{ paddingTop: "16px" }} />
+                <Line
+                  type="monotone"
+                  dataKey="earnings"
+                  stroke="#10B981"
+                  strokeWidth={2.5}
+                  dot={{ fill: "#10B981", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6 }}
+                  name="Earnings"
+                />
+                <Line
+                  type="monotone"
+                  dataKey="expenses"
+                  stroke="#EF4444"
+                  strokeWidth={2.5}
+                  dot={{ fill: "#EF4444", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6 }}
+                  name="Expenses"
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
-          <div className="space-y-1">
-            <p className="text-md font-medium">
-              BDT: ৳ {summary?.BDT?.expenses?.pending?.toLocaleString() || 0}
-            </p>
-            <p className="text-md font-medium">
-              INR: ₹ {summary?.INR?.expenses?.pending?.toLocaleString() || 0}
-            </p>
+
+          {/* Summary Stats at bottom */}
+          <div className="px-6 py-3 bg-gray-50 border-t border-gray-100">
+            <div className="flex justify-between items-center text-sm">
+              <div>
+                <span className="text-gray-500">Avg Monthly Earnings: </span>
+                <span className="font-semibold text-green-600">
+                  ৳{" "}
+                  {Math.round(
+                    monthlyData.reduce(
+                      (acc: any, curr: any) => acc + curr.earnings,
+                      0,
+                    ) / monthlyData.length || 0,
+                  ).toLocaleString()}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-500">Avg Monthly Expenses: </span>
+                <span className="font-semibold text-red-600">
+                  ৳{" "}
+                  {Math.round(
+                    monthlyData.reduce(
+                      (acc: any, curr: any) => acc + curr.expenses,
+                      0,
+                    ) / monthlyData.length || 0,
+                  ).toLocaleString()}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
