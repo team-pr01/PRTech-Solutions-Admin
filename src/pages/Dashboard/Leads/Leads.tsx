@@ -74,7 +74,6 @@ const Leads = () => {
     discoveryCallScheduledDate: discoveryCallDateFilter,
     followUpDate: followUpDateFilter,
   });
-  console.log(data);
   const { data: niche } = useGetAllNichesQuery({});
 
   // Status style mapping
