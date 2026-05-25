@@ -1,7 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import type { TableHead } from "../../../../components/Reusable/Table/Table";
-import { FiEye, FiEdit2, FiTrash2, FiCalendar, FiUsers } from "react-icons/fi";
+import {
+  FiEye,
+  FiEdit2,
+  FiTrash2,
+  FiCalendar,
+  FiUsers,
+  FiClock,
+  FiPlus,
+} from "react-icons/fi";
 import Table from "../../../../components/Reusable/Table/Table";
 import { formatDate } from "../../../../utils/formatDate";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +21,8 @@ import { toast } from "react-hot-toast";
 import Modal from "../../../../components/Reusable/Modal/Modal";
 import AddOrEditProject from "../../../../components/Dashboard/AdminPages/ProjectPage/AddOrEditProject/AddOrEditProject";
 import Button from "../../../../components/Reusable/Button/Button";
+import AddOrEditPhase from "../../../../components/Dashboard/AdminPages/ProjectPage/AddOrEditPhase/AddOrEditPhase";
+import PhaseDetails from "../../../../components/Dashboard/AdminPages/ProjectPage/PhaseDetails/PhaseDetails";
 
 const Projects = () => {
   const navigate = useNavigate();
@@ -37,6 +47,8 @@ const Projects = () => {
   const [selectedProjectId, setSelectedProjectId] = useState<any>(null);
   const [isAddOrEditProjectModalOpen, setIsAddOrEditProjectModalOpen] =
     useState<boolean>(false);
+  const [isPhaseModalOpen, setIsPhaseModalOpen] = useState<boolean>(false);
+  const [isPhaseDetailsOpen, setIsPhaseDetailsOpen] = useState(false);
   // Status style mapping
   const statusStyles: Record<string, string> = {
     Ongoing: "bg-blue-100 text-blue-700",
@@ -63,7 +75,6 @@ const Projects = () => {
     { key: "clientInfo", label: "Client" },
     { key: "timeline", label: "Timeline" },
     { key: "financial", label: "Financial" },
-    { key: "progress", label: "Progress" },
     { key: "status", label: "Status" },
     { key: "createdAt", label: "Created Date" },
   ];
@@ -87,16 +98,6 @@ const Projects = () => {
         },
       );
     }
-  };
-
-  // Calculate progress percentage based on phases
-  const calculateProgress = (phases: string[], onGoingPhase: string) => {
-    if (!phases || phases.length === 0) return 0;
-    const currentPhaseIndex = phases.findIndex(
-      (phase) => phase.toLowerCase() === onGoingPhase?.toLowerCase(),
-    );
-    if (currentPhaseIndex === -1) return 0;
-    return Math.round(((currentPhaseIndex + 1) / phases.length) * 100);
   };
 
   // Get primary contact person
@@ -131,7 +132,7 @@ const Projects = () => {
       <div className="space-y-1">
         <p className="font-semibold text-gray-800">{project.name}</p>
         <span
-          className={`inline-block text-xs px-2 py-0.5 rounded ${projectTypeStyles[project.projectType]}`}
+          className={`inline-block text-xs rounded ${projectTypeStyles[project.projectType]}`}
         >
           {project.projectType}
         </span>
@@ -180,6 +181,12 @@ const Projects = () => {
             </span>
           </div>
         )}
+        {project.deadline && (
+          <div className="flex items-center gap-1">
+            <FiClock size={12} className="text-gray-400" />
+            <span className="text-gray-600">Deadline: {project.deadline}</span>
+          </div>
+        )}
         {project.onGoingPhase && (
           <p className="text-xs text-primary-10 mt-1">
             Current Phase: {project.onGoingPhase}
@@ -192,11 +199,11 @@ const Projects = () => {
     financial: (
       <div className="space-y-1">
         <p className="font-semibold text-gray-800">
-          {formatCurrency(project.price, project.priceCurrency)}
+          Total Price: {formatCurrency(project.price, project.priceCurrency)}
         </p>
-        {project.dueAmount !== undefined && project.dueAmount > 0 && (
+        {project.pendingAmount !== undefined && project.pendingAmount > 0 && (
           <p className="text-sm text-red-600">
-            Due: {formatCurrency(project.dueAmount, project.priceCurrency)}
+            Due: {formatCurrency(project.pendingAmount, project.priceCurrency)}
           </p>
         )}
         {project.installments && project.installments.length > 0 && (
@@ -204,36 +211,27 @@ const Projects = () => {
             {project.installments.length} installment(s)
           </p>
         )}
-      </div>
-    ),
-
-    // Column: Progress
-    progress: (
-      <div className="space-y-1">
-        <div className="flex justify-between text-xs text-gray-600">
-          <span>Progress</span>
-          <span>
-            {calculateProgress(project.phases, project.onGoingPhase)}%
-          </span>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div
-            className="bg-primary-10 h-2 rounded-full transition-all duration-300"
-            style={{
-              width: `${calculateProgress(project.phases, project.onGoingPhase)}%`,
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              setSelectedProjectId(project._id);
+              setIsPhaseDetailsOpen(true);
             }}
-          />
+            className="text-xs text-primary-10 underline flex items-center gap-1"
+          >
+            <FiEye /> View Phases
+          </button>
+          <button
+            onClick={() => {
+              setSelectedProjectId(project?._id);
+              setModalType("add");
+              setIsPhaseModalOpen(true);
+            }}
+            className="text-xs text-neutral-5 underline flex items-center gap-1"
+          >
+            <FiPlus /> Add New Phase
+          </button>
         </div>
-        {project.phases && project.phases.length > 0 && (
-          <p className="text-xs text-gray-500">
-            Phase{" "}
-            {project.phases.findIndex(
-              (phase: string) =>
-                phase.toLowerCase() === project.onGoingPhase?.toLowerCase(),
-            ) + 1}{" "}
-            of {project.phases.length}
-          </p>
-        )}
       </div>
     ),
 
@@ -275,6 +273,15 @@ const Projects = () => {
       icon: <FiTrash2 className="inline text-red-600" />,
       onClick: (row: any) => {
         handleDeleteProject(row._id, row.name);
+      },
+    },
+    {
+      label: "Add Phase",
+      icon: <FiPlus className="inline text-blue-600" />,
+      onClick: (row: any) => {
+        setSelectedProjectId(row._id);
+        setModalType("add");
+        setIsPhaseModalOpen(true);
       },
     },
   ];
@@ -364,6 +371,28 @@ const Projects = () => {
           onClose={() => setIsAddOrEditProjectModalOpen(false)}
         />
       </Modal>
+
+      <Modal
+        heading={modalType === "add" ? "Add Phase" : "Edit Phase"}
+        isModalOpen={isPhaseModalOpen}
+        setIsModalOpen={setIsPhaseModalOpen}
+      >
+        <AddOrEditPhase
+          projectId={selectedProjectId}
+          // phaseId={selectedPhaseId}
+          modalType={modalType}
+          onClose={() => setIsPhaseModalOpen(false)}
+          onSuccess={() => {
+            setIsPhaseModalOpen(false);
+          }}
+        />
+      </Modal>
+
+      <PhaseDetails
+        isOpen={isPhaseDetailsOpen}
+        onClose={() => setIsPhaseDetailsOpen(false)}
+        projectId={selectedProjectId}
+      />
     </div>
   );
 };

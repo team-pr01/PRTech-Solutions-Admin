@@ -74,6 +74,73 @@ const projectApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["project"],
     }),
+
+    addPhase: builder.mutation<any, any>({
+      query: ({projectId, data}) => ({
+        url: `/project/phases/add/${projectId}`,
+        method: "POST",
+        body: data,
+        credentials: "include",
+      }),
+      invalidatesTags: ["project"],
+    }),
+
+    getAllPhases: builder.query({
+      query: (id) => ({
+        url: `/project/phases/${id}`,
+        method: "GET",
+        credentials: "include",
+      }),
+      providesTags: ["project"],
+    }),
+
+    getSinglePhaseById: builder.query({
+      query: ({ projectId, phaseId }) => ({
+        url: `/project/phases/${projectId}/${phaseId}`,
+        method: "GET",
+        credentials: "include",
+      }),
+      providesTags: ["project"],
+    }),
+
+    updatePhase: builder.mutation<any, any>({
+      query: ({ projectId, phaseId, data }) => ({
+        url: `/project/phases/update/${projectId}/${phaseId}`,
+        method: "PUT",
+        body: data,
+        credentials: "include",
+      }),
+      invalidatesTags: ["project"],
+    }),
+
+    addInstallment: builder.mutation<any, any>({
+      query: ({ projectId, phaseId, data }) => ({
+        url: `/project/${projectId}/phases/${phaseId}/installments/add`,
+        method: "POST",
+        body: data,
+        credentials: "include",
+      }),
+      invalidatesTags: ["project"],
+    }),
+
+    updateInstallment: builder.mutation<any, any>({
+      query: ({ projectId, phaseId, installmentId, data }) => ({
+        url: `/project/${projectId}/phases/${phaseId}/installments/update/${installmentId}`,
+        method: "PUT",
+        body: data,
+        credentials: "include",
+      }),
+      invalidatesTags: ["project"],
+    }),
+
+    deletePhase: builder.mutation<any, any>({
+      query: ({ projectId, phaseId }) => ({
+        url: `/project/phases/delete/${projectId}/${phaseId}`,
+        method: "DELETE",
+        credentials: "include",
+      }),
+      invalidatesTags: ["project"],
+    }),
   }),
 });
 
@@ -82,5 +149,12 @@ export const {
   useGetSingleProjectByIdQuery,
   useAddProjectMutation,
   useUpdateProjectMutation,
-  useDeleteProjectMutation
+  useDeleteProjectMutation,
+  useAddPhaseMutation,
+  useGetAllPhasesQuery,
+  useGetSinglePhaseByIdQuery,
+  useUpdatePhaseMutation,
+  useAddInstallmentMutation,
+  useUpdateInstallmentMutation,
+  useDeletePhaseMutation,
 } = projectApi;

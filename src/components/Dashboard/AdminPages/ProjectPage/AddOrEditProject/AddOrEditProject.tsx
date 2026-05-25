@@ -16,9 +16,34 @@ import Textarea from "../../../../Reusable/TextArea/TextArea";
 type Installment = {
   amount: number;
   date: string;
-  paymentMethod?: "Cash" | "Bank Transfer" | "Credit Card" | "PayPal" | "Other";
+  paymentMethod?:
+    | "Cash"
+    | "Bank Transfer"
+    | "Credit Card"
+    | "PayPal"
+    | "bKash"
+    | "Nagad"
+    | "PhonePe"
+    | "Google Pay"
+    | "Payoneer"
+    | "Other";
   receiver?: string;
   note?: string;
+};
+
+type Phase = {
+  name: string;
+  phaseStatus: "Pending" | "Yet to Start" | "Ongoing" | "On Hold" | "Completed";
+  totalAmount: number;
+  pendingAmount: number;
+  paymentStatus: "Pending" | "Paid";
+  installments: Installment[];
+};
+
+type Expenditure = {
+  description: string;
+  totalAmount: number;
+  pendingAmount: number;
 };
 
 type ContactPerson = {
@@ -30,25 +55,19 @@ type ContactPerson = {
 
 type ProjectFormData = {
   name: string;
-  projectType:
-    | "Frontend"
-    | "Backend"
-    | "Full Stack Website"
-    | "Mobile App-Android"
-    | "Mobile App-iOS"
-    | "UI/UX Design"
-    | "Redesign"
-    | "Other";
+  projectType: string;
   description?: string;
   startDate?: string;
   endDate?: string;
+  deadline?: string;
   status: "Ongoing" | "Completed" | "On Hold" | "Yet to Start";
   priceCurrency: string;
   price: number;
-  installments: Installment[];
-  phases: string[];
+  pendingAmount: number;
+  phases: Phase[];
   onGoingPhase?: string;
   timelineLink?: string;
+  expenditures: Expenditure[];
   contactPerson: ContactPerson[];
   notes?: string;
   clientId: string;
@@ -78,24 +97,37 @@ const AddOrEditProject = ({
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<ProjectFormData>();
-
-  const {
-    fields: installmentFields,
-    append: appendInstallment,
-    remove: removeInstallment,
-  } = useFieldArray({
-    control,
-    name: "installments",
+  } = useForm<ProjectFormData>({
+    defaultValues: {
+      name: "",
+      projectType: "",
+      description: "",
+      startDate: "",
+      endDate: "",
+      deadline: "",
+      status: "Yet to Start",
+      priceCurrency: "",
+      price: 0,
+      pendingAmount: 0,
+      phases: [],
+      onGoingPhase: "",
+      timelineLink: "",
+      expenditures: [],
+      contactPerson: [
+        { name: "", countryCode: "", phoneNumber: "", isPrimary: true },
+      ],
+      notes: "",
+      clientId: "",
+    },
   });
 
   const {
-    fields: phaseFields,
-    append: appendPhase,
-    remove: removePhase,
-  } = useFieldArray<any>({
+    fields: expenditureFields,
+    append: appendExpenditure,
+    remove: removeExpenditure,
+  } = useFieldArray({
     control,
-    name: "phases",
+    name: "expenditures",
   });
 
   const {
@@ -110,33 +142,9 @@ const AddOrEditProject = ({
   const [addProject] = useAddProjectMutation();
   const [updateProject] = useUpdateProjectMutation();
 
-  // Options for dropdowns
-  const projectTypeOptions = [
-    "Frontend",
-    "Backend",
-    "Full Stack Website",
-    "Mobile App-Android",
-    "Mobile App-iOS",
-    "UI/UX Design",
-    "Redesign",
-    "Other",
-  ];
-
   const statusOptions = ["Yet to Start", "Ongoing", "On Hold", "Completed"];
 
   const currencyOptions = ["BDT", "INR", "USD", "Other"];
-
-  const paymentMethodOptions = [
-    "Bank Transfer",
-    "Cash",
-    "bKash",
-    "Nagad",
-    "PhonePe",
-    "Google Pay",
-    "PayPal",
-    "Payoneer",
-    "Other",
-  ];
 
   // Set default values when editing
   useEffect(() => {
@@ -148,45 +156,40 @@ const AddOrEditProject = ({
         description: project.description || "",
         startDate: project.startDate ? project.startDate.split("T")[0] : "",
         endDate: project.endDate ? project.endDate.split("T")[0] : "",
+        deadline: project.deadline || "",
         status: project.status || "Yet to Start",
         priceCurrency: project.priceCurrency || "USD",
         price: project.price || 0,
-        installments:
-          project.installments?.map((inst: any) => ({
-            amount: inst.amount,
-            date: inst.date ? inst.date.split("T")[0] : "",
-            paymentMethod: inst.paymentMethod,
-            receiver: inst.receiver,
-            note: inst.note,
+        pendingAmount: project.pendingAmount || 0,
+        phases:
+          project.phases?.map((phase: any) => ({
+            name: phase.name,
+            phaseStatus: phase.phaseStatus || "Pending",
+            totalAmount: phase.totalAmount || 0,
+            pendingAmount: phase.pendingAmount || 0,
+            paymentStatus: phase.paymentStatus || "Pending",
+            installments:
+              phase.installments?.map((inst: any) => ({
+                amount: inst.amount,
+                date: inst.date ? inst.date.split("T")[0] : "",
+                paymentMethod: inst.paymentMethod,
+                receiver: inst.receiver,
+                note: inst.note,
+              })) || [],
           })) || [],
-        phases: project.phases || [],
         onGoingPhase: project.onGoingPhase || "",
         timelineLink: project.timelineLink || "",
+        expenditures:
+          project.expenditures?.map((exp: any) => ({
+            description: exp.description,
+            totalAmount: exp.totalAmount,
+            pendingAmount: exp.pendingAmount,
+          })) || [],
         contactPerson: project.contactPerson?.length
           ? project.contactPerson
           : [{ name: "", countryCode: "", phoneNumber: "", isPrimary: true }],
         notes: project.notes || "",
         clientId: project.clientId?._id || project.clientId || "",
-      });
-    } else if (modalType === "add") {
-      reset({
-        name: "",
-        projectType: "Frontend",
-        description: "",
-        startDate: "",
-        endDate: "",
-        status: "Yet to Start",
-        priceCurrency: "USD",
-        price: 0,
-        installments: [],
-        phases: [],
-        onGoingPhase: "",
-        timelineLink: "",
-        contactPerson: [
-          { name: "", countryCode: "", phoneNumber: "", isPrimary: true },
-        ],
-        notes: "",
-        clientId: "",
       });
     }
   }, [modalType, projectData, reset]);
@@ -201,18 +204,29 @@ const AddOrEditProject = ({
         data.contactPerson[0].isPrimary = true;
       }
 
+      // Calculate total pending amount from phases
+      const totalPhasePending = data.phases.reduce(
+        (sum, phase) => sum + (phase.pendingAmount || 0),
+        0,
+      );
+
       // Convert date strings to ISO format
       const payload = {
         ...data,
+        pendingAmount: data.pendingAmount || totalPhasePending,
         startDate: data.startDate
           ? new Date(data.startDate).toISOString()
           : undefined,
         endDate: data.endDate
           ? new Date(data.endDate).toISOString()
           : undefined,
-        installments: data.installments.map((inst) => ({
-          ...inst,
-          date: inst.date ? new Date(inst.date).toISOString() : undefined,
+        phases: data.phases.map((phase) => ({
+          ...phase,
+          installments:
+            phase.installments?.map((inst) => ({
+              ...inst,
+              date: inst.date ? new Date(inst.date).toISOString() : undefined,
+            })) || [],
         })),
       };
 
@@ -260,7 +274,6 @@ const AddOrEditProject = ({
             Basic Information
           </h3>
 
-          {/* Project Name */}
           <TextInput
             label="Project Name"
             placeholder="Enter project name"
@@ -274,7 +287,6 @@ const AddOrEditProject = ({
             })}
           />
 
-          {/* Client Selection */}
           <div className="space-y-1">
             <label className="block text-sm font-medium text-gray-700">
               Client <span className="text-primary-10">*</span>
@@ -299,17 +311,15 @@ const AddOrEditProject = ({
             )}
           </div>
 
-          {/* Project Type */}
-          <SelectDropdown
+          <TextInput
             label="Project Type"
-            options={projectTypeOptions}
+            placeholder="Enter project type (e.g. Frontend, Backend, Mobile App)"
             error={errors.projectType}
             {...register("projectType", {
               required: "Project type is required",
             })}
           />
 
-          {/* Status */}
           <SelectDropdown
             label="Status"
             options={statusOptions}
@@ -317,11 +327,11 @@ const AddOrEditProject = ({
             {...register("status", { required: "Status is required" })}
           />
 
-          {/* Description */}
           <Textarea
-            label="Description"
+            label="Description/Requirement Doc Link"
             placeholder="Enter project description..."
             {...register("description")}
+            isRequired={false}
           />
         </div>
 
@@ -331,7 +341,7 @@ const AddOrEditProject = ({
             Timeline
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <TextInput
               label="Start Date"
               type="date"
@@ -346,6 +356,14 @@ const AddOrEditProject = ({
               {...register("endDate")}
               isRequired={false}
             />
+
+            <TextInput
+              label="Deadline"
+              placeholder="Enter deadline"
+              error={errors.deadline}
+              {...register("deadline")}
+              isRequired={false}
+            />
           </div>
         </div>
 
@@ -355,7 +373,7 @@ const AddOrEditProject = ({
             Financial Information
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <SelectDropdown
               label="Currency"
               options={currencyOptions}
@@ -367,143 +385,93 @@ const AddOrEditProject = ({
               type="number"
               placeholder="Enter total price"
               error={errors.price}
-              {...register("price", {
-                required: "Price is required",
-                min: { value: 0, message: "Price must be positive" },
-                valueAsNumber: true,
-              })}
+              {...register("price")}
+              isRequired={false}
+            />
+
+            <TextInput
+              label="Pending Amount"
+              type="number"
+              placeholder="Enter pending amount"
+              error={errors.pendingAmount}
+              {...register("pendingAmount")}
+              isRequired={false}
             />
           </div>
         </div>
-
-        {/* Installments Section */}
+        {/* Expenditure Section */}
         <div className="space-y-4">
           <div className="flex justify-between items-center border-b border-gray-200 pb-2">
-            <h3 className="text-lg font-semibold text-gray-800">
-              Installments
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-800">Expenditure</h3>
             <button
               type="button"
               onClick={() =>
-                appendInstallment({
-                  amount: 0,
-                  date: "",
-                  paymentMethod: "Bank Transfer",
-                  receiver: "",
-                  note: "",
+                appendExpenditure({
+                  description: "",
+                  totalAmount: 0,
+                  pendingAmount: 0,
                 })
               }
               className="flex items-center gap-1 text-sm text-primary-10 hover:text-primary-20"
             >
-              <FiPlus size={16} /> Add Installment
+              <FiPlus size={16} /> Add Expenditure
             </button>
           </div>
 
-          {installmentFields.map((field, index) => (
+          {expenditureFields.map((field, index) => (
             <div
               key={field.id}
               className="p-4 border border-gray-200 rounded-lg space-y-3"
             >
               <div className="flex justify-between items-start">
                 <h4 className="font-medium text-gray-700">
-                  Installment {index + 1}
+                  Expenditure {index + 1}
                 </h4>
                 <button
                   type="button"
-                  onClick={() => removeInstallment(index)}
+                  onClick={() => removeExpenditure(index)}
                   className="text-red-500 hover:text-red-700"
                 >
                   <FiTrash2 size={18} />
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <TextInput
-                  label="Amount"
+                  label="Description"
+                  placeholder="Enter description"
+                  error={errors.expenditures?.[index]?.description}
+                  {...register(`expenditures.${index}.description`, {
+                    required: "Description is required",
+                  })}
+                />
+
+                <TextInput
+                  label="Total Amount"
                   type="number"
-                  placeholder="Enter amount"
-                  error={errors.installments?.[index]?.amount}
-                  {...register(`installments.${index}.amount`, {
-                    required: "Amount is required",
-                    min: { value: 0, message: "Amount must be positive" },
+                  placeholder="Enter total amount"
+                  error={errors.expenditures?.[index]?.totalAmount}
+                  {...register(`expenditures.${index}.totalAmount`, {
+                    required: "Total amount is required",
                     valueAsNumber: true,
+                    min: { value: 0, message: "Amount must be positive" },
                   })}
                 />
 
                 <TextInput
-                  label="Date"
-                  type="date"
-                  error={errors.installments?.[index]?.date}
-                  {...register(`installments.${index}.date`, {
-                    required: "Date is required",
+                  label="Pending Amount"
+                  type="number"
+                  placeholder="Enter pending amount"
+                  error={errors.expenditures?.[index]?.pendingAmount}
+                  {...register(`expenditures.${index}.pendingAmount`, {
+                    required: "Pending amount is required",
+                    valueAsNumber: true,
+                    min: { value: 0, message: "Amount must be positive" },
                   })}
                 />
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <SelectDropdown
-                  label="Payment Method"
-                  options={paymentMethodOptions}
-                  {...register(`installments.${index}.paymentMethod`)}
-                />
-
-                <TextInput
-                  label="Receiver"
-                  placeholder="Receiver name"
-                  {...register(`installments.${index}.receiver`)}
-                />
-              </div>
-
-              <Textarea
-                label="Note"
-                placeholder="Additional note"
-                {...register(`installments.${index}.note`)}
-              />
             </div>
           ))}
-        </div>
-
-        {/* Phases Section */}
-        <div className="space-y-4">
-          <div className="border-b border-gray-200 pb-2 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-800">Phases</h3>
-            <button
-              type="button"
-              onClick={() => appendPhase("" as any)}
-              className="flex items-center gap-1 text-sm text-primary-10 hover:text-primary-20"
-            >
-              <FiPlus size={16} /> Add
-            </button>
-          </div>
-
-          {phaseFields.map((field, index) => (
-            <div key={field.id} className="flex items-center gap-2">
-              <div className="flex-1">
-                <TextInput
-                  placeholder={`Phase ${index + 1}`}
-                  {...register(`phases.${index}`, {
-                    required: "Phase name is required",
-                  })}
-                />
-              </div>
-              <button
-                type="button"
-                onClick={() => removePhase(index)}
-                className="text-red-500 hover:text-red-700 mt-2"
-              >
-                <FiTrash2 size={18} />
-              </button>
-            </div>
-          ))}
-
-          {phaseFields.length > 0 && (
-            <TextInput
-              label="Ongoing Phase"
-              placeholder="Current ongoing phase"
-              {...register("onGoingPhase")}
-              isRequired={false}
-            />
-          )}
         </div>
 
         {/* Contact Persons Section */}

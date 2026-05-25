@@ -219,7 +219,7 @@ const AddOrEditClient = ({
 
           {/* Name */}
           <TextInput
-            label="Client Name *"
+            label="Client Name"
             placeholder="Enter client name"
             error={errors.name}
             {...register("name", {
@@ -261,6 +261,7 @@ const AddOrEditClient = ({
             {...register("companySize", {
               required: "Company size is required",
             })}
+            isRequired={false}
           />
         </div>
 
@@ -384,7 +385,9 @@ const AddOrEditClient = ({
                 <TextInput
                   label="Type"
                   placeholder="Enter type (e.g., business, personal)"
-                  error={errors.phoneNumbers?.[index]?.type as FieldError | undefined}
+                  error={
+                    errors.phoneNumbers?.[index]?.type as FieldError | undefined
+                  }
                   {...register(`phoneNumbers.${index}.type`, {
                     required: "Phone type is required",
                   })}
@@ -438,7 +441,7 @@ const AddOrEditClient = ({
           </h3>
 
           <TextInput
-            label="Country *"
+            label="Country"
             placeholder="Enter country"
             error={errors.country}
             {...register("country", { required: "Country is required" })}
@@ -493,18 +496,21 @@ const AddOrEditClient = ({
             label="LinkedIn"
             placeholder="https://linkedin.com/company/..."
             {...register("socialMedia.linkedin")}
+            isRequired={false}
           />
 
           <TextInput
             label="Twitter"
             placeholder="https://twitter.com/..."
             {...register("socialMedia.twitter")}
+            isRequired={false}
           />
 
           <TextInput
             label="Facebook"
             placeholder="https://facebook.com/..."
             {...register("socialMedia.facebook")}
+            isRequired={false}
           />
         </div>
 
@@ -518,6 +524,7 @@ const AddOrEditClient = ({
             label="Notes"
             placeholder="Additional notes about the client..."
             {...register("notes")}
+            isRequired={false}
           />
         </div>
 
