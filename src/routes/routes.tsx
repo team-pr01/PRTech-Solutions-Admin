@@ -14,6 +14,7 @@ import Leads from "../pages/Dashboard/Leads/Leads";
 import LeadDetails from "../pages/Dashboard/Leads/LeadDetails";
 import Accounts from "../pages/Dashboard/Admin/Accounts/Accounts";
 import Staffs from "../pages/Dashboard/Admin/Staffs/Staffs";
+import AllLeads from "../pages/Dashboard/Admin/AllLeads/AllLeads";
 
 export const router = createBrowserRouter([
   // Main layout routes
@@ -57,6 +58,10 @@ export const router = createBrowserRouter([
       {
         path: "project/:id",
         element: <ProjectDetails />,
+      },
+      {
+        path: "all-leads",
+        element: <AllLeads />,
       },
       {
         path: "leads",

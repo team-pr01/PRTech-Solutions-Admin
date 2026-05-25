@@ -13,23 +13,20 @@ import {
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import {
-  useDeleteLeadMutation,
-  useGetMyAddedLeadsQuery,
-} from "../../../redux/Features/Lead/leadApi";
-import type { TableHead } from "../../../components/Reusable/Table/Table";
-import { formatDate } from "../../../utils/formatDate";
-import Table from "../../../components/Reusable/Table/Table";
-import Modal from "../../../components/Reusable/Modal/Modal";
-import ScheduleDiscoveryCall from "../../../components/Dashboard/LeadPage/ScheduleDiscoveryCall/ScheduleDiscoveryCall";
-import AddFollowUp from "../../../components/Dashboard/LeadPage/AddFollowUp/AddFollowUp";
-import ViewFollowUps from "../../../components/Dashboard/LeadPage/ViewFollowUps/ViewFollowUps";
-import Button from "../../../components/Reusable/Button/Button";
-import AddOrEditLead from "../../../components/Dashboard/LeadPage/AddOrEditLead/AddOrEditLead";
-import { useGetAllNichesQuery } from "../../../redux/Features/Niche/nicheApi";
-import Niche from "../../../components/Dashboard/LeadPage/Niche/Niche";
+import { useDeleteLeadMutation, useGetAllLeadsQuery } from "../../../../redux/Features/Lead/leadApi";
+import { useGetAllNichesQuery } from "../../../../redux/Features/Niche/nicheApi";
+import type { TableHead } from "../../../../components/Reusable/Table/Table";
+import { formatDate } from "../../../../utils/formatDate";
+import Niche from "../../../../components/Dashboard/LeadPage/Niche/Niche";
+import Button from "../../../../components/Reusable/Button/Button";
+import Table from "../../../../components/Reusable/Table/Table";
+import Modal from "../../../../components/Reusable/Modal/Modal";
+import ScheduleDiscoveryCall from "../../../../components/Dashboard/LeadPage/ScheduleDiscoveryCall/ScheduleDiscoveryCall";
+import AddFollowUp from "../../../../components/Dashboard/LeadPage/AddFollowUp/AddFollowUp";
+import ViewFollowUps from "../../../../components/Dashboard/LeadPage/ViewFollowUps/ViewFollowUps";
+import AddOrEditLead from "../../../../components/Dashboard/LeadPage/AddOrEditLead/AddOrEditLead";
 
-const Leads = () => {
+const AllLeads = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
@@ -61,7 +58,7 @@ const Leads = () => {
 
   const [deleteLead] = useDeleteLeadMutation();
 
-  const { data, isLoading, isFetching, refetch } = useGetMyAddedLeadsQuery({
+  const { data, isLoading, isFetching, refetch } = useGetAllLeadsQuery({
     page,
     skip,
     keyword: searchQuery,
@@ -74,7 +71,6 @@ const Leads = () => {
     discoveryCallScheduledDate: discoveryCallDateFilter,
     followUpDate: followUpDateFilter,
   });
-  console.log(data);
   const { data: niche } = useGetAllNichesQuery({});
 
   // Status style mapping
@@ -615,4 +611,4 @@ const Leads = () => {
   );
 };
 
-export default Leads;
+export default AllLeads;

@@ -40,6 +40,11 @@ export const adminDashboardLinks: DashboardLink[] = [
     path: "/dashboard/admin/leads",
     icon: <FiTrendingUp />,
   },
+  {
+    label: "All Leads",
+    path: "/dashboard/admin/all-leads",
+    icon: <FiTrendingUp />,
+  },
 ];
 
 export const staffDashboardLinks: DashboardLink[] = [
