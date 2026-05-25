@@ -24,6 +24,7 @@ type AccountFormData = {
   currency: string;
   paidAmount: number;
   totalAmount: number;
+  pendingAmount: number;
   paidBy?: string;
   paymentMethod: string;
   date: string;
@@ -85,6 +86,7 @@ const AddOrEditAccount = ({
         description: account.description || "",
         currency: account.currency || "USD",
         paidAmount: account.paidAmount || 0,
+        pendingAmount: account.pendingAmount || 0,
         totalAmount: account.totalAmount || 0,
         paidBy: account.paidBy || "",
         paymentMethod: account.paymentMethod || "",
@@ -115,6 +117,7 @@ const AddOrEditAccount = ({
         ...data,
         paidAmount: Number(data.paidAmount),
         totalAmount: Number(data.totalAmount),
+        pendingAmount: Number(data.pendingAmount),
         date: new Date(data.date).toISOString(),
         note: data.note || null,
       };
@@ -189,7 +192,7 @@ const AddOrEditAccount = ({
         {...register("description", { required: "Description is required" })}
       />
 
-      {/* Currency and Amounts */}
+      {/* Payment Information */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <SelectDropdown
           label="Currency"
@@ -197,6 +200,24 @@ const AddOrEditAccount = ({
           error={errors.currency}
           {...register("currency", { required: "Currency is required" })}
         />
+        <TextInput
+          label="Paid By"
+          placeholder="Who made the payment?"
+          error={errors.paidBy}
+          {...register("paidBy")}
+          isRequired={false}
+        />
+        <TextInput
+          label="Payment Method"
+          placeholder="ex: Bank Transfer, bKash, PhonePe."
+          error={errors.paymentMethod}
+          {...register("paymentMethod")}
+        />
+      </div>
+
+      {/* Currency and Amounts */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
 
         <TextInput
           label="Total Amount"
@@ -219,24 +240,22 @@ const AddOrEditAccount = ({
             min: { value: 0, message: "Amount must be positive" },
             valueAsNumber: true,
           })}
+          isRequired={false}
+        />
+
+        <TextInput
+          label="Pending Amount"
+          type="number"
+          placeholder="Enter pending amount"
+          error={errors.pendingAmount}
+          {...register("pendingAmount", {
+            min: { value: 0, message: "Amount must be positive" },
+            valueAsNumber: true,
+          })}
         />
       </div>
 
-      {/* Payment Information */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <TextInput
-          label="Paid By"
-          placeholder="Who made the payment?"
-          error={errors.paidBy}
-          {...register("paidBy")}
-        />
-        <TextInput
-          label="Payment Method"
-          placeholder="ex: Bank Transfer, bKash, PhonePe."
-          error={errors.paymentMethod}
-          {...register("paymentMethod")}
-        />
-      </div>
+      
 
       {/* Date */}
       <TextInput

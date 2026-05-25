@@ -5,10 +5,9 @@ import {
   FiTrash2,
   FiTrendingUp,
   FiTrendingDown,
-  FiClock,
 } from "react-icons/fi";
 import {
-  useGetAccountSummaryQuery,
+  useGetAccountStatsQuery,
   useGetAllAccountsQuery,
 } from "../../../../redux/Features/Accounts/accountsApi";
 import { useDeleteAccountMutation } from "../../../../redux/Features/User/userApi";
@@ -54,7 +53,7 @@ const Accounts = () => {
     date,
   });
 
-  const { data: accountSummary } = useGetAccountSummaryQuery({});
+  const { data: accountStats } = useGetAccountStatsQuery({});
 
   const [deleteAccount] = useDeleteAccountMutation();
 
@@ -206,7 +205,7 @@ const Accounts = () => {
   };
 
   // Get summary data
-  const summary = accountSummary?.data || {};
+  const stats = accountStats?.data || {};
 
   // Filters
   const typeFilterDropdown = (
@@ -258,7 +257,7 @@ const Accounts = () => {
 
   // Add after the summary constant
   const targetAmount = 5000000; // 50 lac BDT
-  const currentEarnings = summary?.BDT?.earnings?.total || 0;
+  const currentEarnings = stats?.BDT?.earnings?.total || 0;
   const progressPercentage = Math.min(
     Math.floor((currentEarnings / targetAmount) * 100),
     100,
@@ -289,29 +288,16 @@ const Accounts = () => {
     // Replace with actual API call
     // fetchMonthlySummary().then(res => setMonthlyData(res.data));
     // For now, use mock data
-    setMonthlyData([
-      { month: "Jan", earnings: 120000, expenses: 80000 },
-      { month: "Feb", earnings: 150000, expenses: 95000 },
-      { month: "Mar", earnings: 180000, expenses: 110000 },
-      { month: "Apr", earnings: 200000, expenses: 130000 },
-      { month: "May", earnings: 220000, expenses: 140000 },
-      { month: "Jun", earnings: 250000, expenses: 160000 },
-      { month: "Jul", earnings: 280000, expenses: 180000 },
-      { month: "Aug", earnings: 300000, expenses: 190000 },
-      { month: "Sep", earnings: 320000, expenses: 200000 },
-      { month: "Oct", earnings: 340000, expenses: 210000 },
-      { month: "Nov", earnings: 360000, expenses: 220000 },
-      { month: "Dec", earnings: 400000, expenses: 250000 },
-    ]);
-  }, []);
+    setMonthlyData(stats?.monthlyData || []);
+  }, [stats?.monthlyData]);
 
   return (
     <div className="space-y-6">
       {/* KPI Cards - Dynamic Mapping */}
       <div className="space-y-8">
         {[
-          { currency: "BDT", symbol: "৳", data: summary?.BDT },
-          { currency: "INR", symbol: "₹", data: summary?.INR },
+          { currency: "BDT", symbol: "৳", data: stats?.BDT },
+          { currency: "INR", symbol: "₹", data: stats?.INR },
         ].map((currencyItem) => (
           <div key={currencyItem?.currency} className="space-y-4">
             <div className="flex items-center gap-2">
@@ -360,49 +346,6 @@ const Accounts = () => {
             </div>
           </div>
         ))}
-
-        {/* Compact Pending Summary */}
-        <div className="bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100 p-5">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-yellow-100 rounded-xl">
-                <FiClock className="text-yellow-600" size={20} />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Pending Earnings</p>
-                <div className="flex gap-4 mt-1">
-                  <span className="text-sm font-semibold text-gray-700">
-                    BDT: ৳{" "}
-                    {summary?.BDT?.earnings?.pending?.toLocaleString() || 0}
-                  </span>
-                  <span className="text-sm font-semibold text-gray-700">
-                    INR: ₹{" "}
-                    {summary?.INR?.earnings?.pending?.toLocaleString() || 0}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="w-px h-10 bg-gray-200 hidden md:block"></div>
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-orange-100 rounded-xl">
-                <FiClock className="text-orange-600" size={20} />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Pending Expenses</p>
-                <div className="flex gap-4 mt-1">
-                  <span className="text-sm font-semibold text-gray-700">
-                    BDT: ৳{" "}
-                    {summary?.BDT?.expenses?.pending?.toLocaleString() || 0}
-                  </span>
-                  <span className="text-sm font-semibold text-gray-700">
-                    INR: ₹{" "}
-                    {summary?.INR?.expenses?.pending?.toLocaleString() || 0}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -506,7 +449,7 @@ const Accounts = () => {
                 <div>
                   <p className="text-xs text-gray-500">Monthly Target</p>
                   <p className="font-semibold text-gray-800 text-sm">
-                    ৳ {(targetAmount / 36).toLocaleString()}
+                    ৳ {(targetAmount / 36).toFixed(2)}
                   </p>
                   <p className="text-xs text-gray-400">
                     ~{(targetAmount / 36 / 100000).toFixed(1)}L per month
@@ -569,10 +512,10 @@ const Accounts = () => {
                     borderRadius: "8px",
                     padding: "8px 12px",
                   }}
-                  formatter={(value: number) => [
-                    `৳ ${value.toLocaleString()}`,
-                    "",
-                  ]}
+                  formatter={(value: any) => {
+                    const numValue = Number(value) || 0;
+                    return [`৳ ${numValue.toLocaleString()}`, ""];
+                  }}
                 />
                 <Legend wrapperStyle={{ paddingTop: "16px" }} />
                 <Line

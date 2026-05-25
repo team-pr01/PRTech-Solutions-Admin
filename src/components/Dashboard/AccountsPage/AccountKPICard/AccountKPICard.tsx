@@ -78,7 +78,7 @@ const AccountKPICard = ({
         </p>
         
         {(type === "earnings" || type === "expenses") && (
-          <div className="flex justify-between text-xs border-t border-gray-100 pt-3">
+          <div className="flex justify-between text-sm border-t border-gray-100 pt-3">
             <div>
               <span className="text-gray-400">Paid</span>
               <p className="text-green-600 font-semibold mt-0.5">
