@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useForm, useFieldArray } from "react-hook-form";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { FiPlus, FiTrash2 } from "react-icons/fi";
 import TextInput from "../../../Reusable/TextInput/TextInput";
@@ -39,7 +39,8 @@ type LeadFormData = {
   // Lead Details
   issueFound?: string;
   priority: number;
-  category: string;
+  niche: string;
+  subNiche: string;
 
   // Discovery Call
   discoveryCallScheduledDate?: string;
@@ -65,15 +66,18 @@ type AddOrEditLeadProps = {
   leadId?: string;
   modalType: "add" | "edit";
   onClose: () => void;
-  categories: any;
+  niches: any;
 };
 
 const AddOrEditLead = ({
   leadId,
   modalType,
   onClose,
-  categories,
+  niches,
 }: AddOrEditLeadProps) => {
+  const [selectedNiche, setSelectedNiche] = useState<any>(null);
+  const [subNicheOptions, setSubNicheOptions] = useState<string[]>([]);
+
   const { data: leadData, isLoading: isLoadingLead } =
     useGetSingleLeadByIdQuery(leadId!, {
       skip: modalType !== "edit" || !leadId,
@@ -85,6 +89,7 @@ const AddOrEditLead = ({
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
+    setValue,
   } = useForm<LeadFormData>({
     defaultValues: {
       businessName: "",
@@ -100,7 +105,8 @@ const AddOrEditLead = ({
       website: "",
       issueFound: "",
       priority: 3,
-      category: "",
+      niche: "",
+      subNiche: "",
       discoveryCallScheduledDate: "",
       discoveryCallScheduledTime: "",
       discoveryCallNotes: "",
@@ -173,7 +179,8 @@ const AddOrEditLead = ({
         website: lead.website || "",
         issueFound: lead.issueFound || "",
         priority: lead.priority || "",
-        category: lead.category || "",
+        niche: lead.niche || "",
+        subNiche: lead.subNiche || "",
         discoveryCallScheduledDate: discoveryDate,
         discoveryCallScheduledTime: discoveryTime,
         discoveryCallNotes: lead.discoveryCallNotes || "",
@@ -197,6 +204,8 @@ const AddOrEditLead = ({
 
       const payload = {
         ...data,
+        niche: selectedNiche?.name,
+        subNiche: data.subNiche,
         discoveryCallScheduledDate,
         priority: Number(data.priority),
       };
@@ -226,8 +235,25 @@ const AddOrEditLead = ({
     }
   };
 
-  const leadCategories =
-    categories?.map((category: any) => category.category) || [];
+  // Handle niche selection
+  const handleNicheChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedNicheName = e.target.value;
+    const foundNiche = niches.find(
+      (niche: any) => niche.name === selectedNicheName,
+    );
+
+    setSelectedNiche(foundNiche);
+
+    // Set sub-niche options
+    if (foundNiche && foundNiche.subNiches) {
+      setSubNicheOptions(foundNiche.subNiches);
+    } else {
+      setSubNicheOptions([]);
+    }
+
+    // Clear sub-niche value when niche changes
+    setValue("subNiche", "");
+  };
 
   if (modalType === "edit" && isLoadingLead) {
     return (
@@ -353,14 +379,26 @@ const AddOrEditLead = ({
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Niche Dropdown */}
             <SelectDropdown
-              label="Category"
-              options={leadCategories || []}
-              error={errors.category}
-              {...register("category", {
-                required: "Category is required",
+              label="Niche"
+              options={niches?.map((niche: any) => niche.name) || []}
+              error={errors.niche}
+              {...register("niche", {
+                required: "Niche is required",
+                onChange: handleNicheChange,
               })}
             />
+
+            {/* Sub-Niche Dropdown - Only show if sub-niches exist */}
+            {subNicheOptions.length > 0 && (
+              <SelectDropdown
+                label="Sub Niche"
+                options={subNicheOptions}
+                error={errors.subNiche}
+                {...register("subNiche")}
+              />
+            )}
 
             <SelectDropdown
               label="Priority"

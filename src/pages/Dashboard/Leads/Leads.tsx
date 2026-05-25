@@ -25,19 +25,19 @@ import ScheduleDiscoveryCall from "../../../components/Dashboard/LeadPage/Schedu
 import AddFollowUp from "../../../components/Dashboard/LeadPage/AddFollowUp/AddFollowUp";
 import ViewFollowUps from "../../../components/Dashboard/LeadPage/ViewFollowUps/ViewFollowUps";
 import Button from "../../../components/Reusable/Button/Button";
-import Category from "../../../components/Reusable/Category/Category";
-import { useGetAllCategoriesByAreaNameQuery } from "../../../redux/Features/Categories/categoriesApi";
 import AddOrEditLead from "../../../components/Dashboard/LeadPage/AddOrEditLead/AddOrEditLead";
+import { useGetAllNichesQuery } from "../../../redux/Features/Niche/nicheApi";
+import Niche from "../../../components/Dashboard/LeadPage/Niche/Niche";
 
 const Leads = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
+  const skip = (page - 1) * limit;
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [countryFilter, setCountryFilter] = useState<string>("");
   const [cityFilter, setCityFilter] = useState<string>("");
-  const [category, setCategory] = useState<string>("");
   const [priorityFilter, setPriorityFilter] = useState<string>("");
   const [discoveryCallDateFilter, setDiscoveryCallDateFilter] =
     useState<string>("");
@@ -55,22 +55,26 @@ const Leads = () => {
     useState<boolean>(false);
   const [isViewFollowUpsOpen, setIsViewFollowUpsOpen] =
     useState<boolean>(false);
+  const [nicheFilter, setNicheFilter] = useState<string>(""); // Change from 'category' to 'nicheFilter'
+  const [subNicheFilter, setSubNicheFilter] = useState<string>("");
+  const [availableSubNiches, setAvailableSubNiches] = useState<string[]>([]);
 
   const [deleteLead] = useDeleteLeadMutation();
 
   const { data, isLoading, isFetching, refetch } = useGetAllLeadsQuery({
     page,
-    limit,
+    skip,
     keyword: searchQuery,
     status: statusFilter,
     country: countryFilter,
     city: cityFilter,
-    category,
+    niche: nicheFilter,
+    subNiche: subNicheFilter,
     priority: priorityFilter,
     discoveryCallScheduledDate: discoveryCallDateFilter,
     followUpDate: followUpDateFilter,
   });
-  const { data: categories } = useGetAllCategoriesByAreaNameQuery("Lead");
+  const { data: niche } = useGetAllNichesQuery({});
 
   // Status style mapping
   const statusStyles: Record<string, string> = {
@@ -95,7 +99,7 @@ const Leads = () => {
     { key: "contactInfo", label: "Contact Info" },
     { key: "location", label: "Location" },
     { key: "priority", label: "Priority" },
-    { key: "category", label: "Niche" },
+    { key: "niche", label: "Niche" },
     { key: "nextFollowUp", label: "Next Follow Up" },
     { key: "status", label: "Status" },
     { key: "createdAt", label: "Created Date" },
@@ -233,10 +237,10 @@ const Leads = () => {
       </div>
     ),
 
-    // Column: Category
-    category: (
+    // Column: Niche
+    niche: (
       <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm inline-block">
-        {lead.category}
+        {lead.niche}
       </span>
     ),
 
@@ -359,6 +363,35 @@ const Leads = () => {
     setSearchQuery(q);
   };
 
+  const handleNicheChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedNicheName = e.target.value;
+    setNicheFilter(selectedNicheName);
+
+    // Find the selected niche and get its sub-niches
+    if (selectedNicheName) {
+      const foundNiche = niche?.data?.find(
+        (nicheItem: any) => nicheItem.name === selectedNicheName,
+      );
+      if (foundNiche && foundNiche.subNiches) {
+        setAvailableSubNiches(foundNiche.subNiches);
+      } else {
+        setAvailableSubNiches([]);
+      }
+    } else {
+      // When "All Niches" is selected, show all unique sub-niches
+      const allSubNiches: string[] = [];
+      niche?.data?.forEach((nicheItem: any) => {
+        if (nicheItem.subNiches) {
+          allSubNiches.push(...nicheItem.subNiches);
+        }
+      });
+      setAvailableSubNiches([...new Set(allSubNiches)]);
+    }
+
+    // Reset sub-niche filter when niche changes
+    setSubNicheFilter("");
+  };
+
   // Status filter dropdown
   const statusFilterDropdown = (
     <select
@@ -456,26 +489,45 @@ const Leads = () => {
           </div>
         </div>
       </div>
+      {/* Niche Dropdown */}
       <select
-        value={category ?? ""}
-        onChange={(e) => setCategory(e.target.value)}
+        value={nicheFilter}
+        onChange={handleNicheChange}
         className="input input-sm px-3 py-2 border border-neutral-55/60 focus:border-primary-10 transition duration-300 focus:outline-none rounded-md text-sm shadow-sm cursor-pointer"
       >
-        <option value="">All Niches </option>
-        {categories?.data?.map((category: any) => (
-          <option key={category?.category} value={category?.category}>
-            {category?.category}
+        <option value="">All Niches</option>
+        {niche?.data?.map((nicheItem: any) => (
+          <option key={nicheItem?.name} value={nicheItem?.name}>
+            {nicheItem?.name}
           </option>
         ))}
       </select>
-      <Category label="Manage Niche" areaName="Lead" />
+
+      {/* Sub-Niche Dropdown - Only show if there are sub-niches available */}
+      {availableSubNiches.length > 0 && (
+        <select
+          value={subNicheFilter}
+          onChange={(e) => setSubNicheFilter(e.target.value)}
+          className="input input-sm px-3 py-2 border border-neutral-55/60 focus:border-primary-10 transition duration-300 focus:outline-none rounded-md text-sm shadow-sm cursor-pointer"
+        >
+          <option value="">All Sub-Niches</option>
+          {availableSubNiches.map((subNiche, index) => (
+            <option key={index} value={subNiche}>
+              {subNiche}
+            </option>
+          ))}
+        </select>
+      )}
+      <Niche label="Manage Niche" />
       <Button
         onClick={() => {
           setStatusFilter("");
           setPriorityFilter("");
           setCountryFilter("");
           setCityFilter("");
-          setCategory("");
+          setNicheFilter("");
+          setSubNicheFilter("");
+          setAvailableSubNiches([]);
           setDiscoveryCallDateFilter("");
           setFollowUpDateFilter("");
         }}
@@ -494,7 +546,7 @@ const Leads = () => {
   return (
     <div>
       <Table<any>
-        title="All Leads"
+        title={`All Leads (${data?.data?.meta?.total || 0})`}
         description="Manage your leads, track follow-ups, and monitor progress"
         theads={leadTableHeaders}
         data={tableData || []}
@@ -554,7 +606,7 @@ const Leads = () => {
           leadId={selectedLeadId}
           modalType={modalType}
           onClose={() => setIsAddOrEditLeadModalOpen(false)}
-          categories={categories?.data}
+          niches={niche?.data}
         />
       </Modal>
     </div>

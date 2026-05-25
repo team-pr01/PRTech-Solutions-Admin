@@ -12,7 +12,8 @@ const leadApi = baseApi.injectEndpoints({
         keyword,
         country,
         city,
-        category,
+        niche,
+        subNiche,
         priority,
         discoveryCallScheduledDate,
         followUpDate
@@ -24,7 +25,8 @@ const leadApi = baseApi.injectEndpoints({
         status?: string;
         country?: string;
         city?: string;
-        category?: string;
+        niche?: string;
+        subNiche?: string;
         priority?: string;
         discoveryCallScheduledDate?: string;
         followUpDate?: string;
@@ -38,7 +40,8 @@ const leadApi = baseApi.injectEndpoints({
         if (status) params.append("status", status);
         if (country) params.append("country", country);
         if (city) params.append("city", city);
-        if (category) params.append("category", category);
+        if (niche) params.append("niche", niche);
+        if (subNiche) params.append("subNiche", subNiche);
         if (priority) params.append("priority", priority);
         if (discoveryCallScheduledDate) params.append("discoveryCallScheduledDate", discoveryCallScheduledDate);
         if (followUpDate) params.append("followUpDate", followUpDate);
