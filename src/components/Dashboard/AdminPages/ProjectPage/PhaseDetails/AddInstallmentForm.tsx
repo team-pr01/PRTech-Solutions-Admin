@@ -53,6 +53,8 @@ const AddInstallmentForm = ({
     "Other",
   ];
 
+  const receiverOptions = ["Gouri", "Rahul"];
+
   const handleAddInstallment = async (data: TInstallmentFormdata) => {
     try {
       const payload = {
@@ -108,10 +110,9 @@ const AddInstallmentForm = ({
           options={paymentMethodOptions}
           {...register(`paymentMethod`)}
         />
-
-        <TextInput
+        <SelectDropdown
           label="Receiver"
-          placeholder="Receiver name"
+          options={receiverOptions}
           {...register(`receiver`)}
         />
       </div>
