@@ -478,7 +478,7 @@ const Queries = () => {
               {/* Answer Section */}
               {selectedQuery.answer ? (
                 <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-                  <label className="text-sm font-medium text-green-800 mb-2 block flex items-center gap-2">
+                  <label className="text-sm font-medium text-green-800 mb-2 flex items-center gap-2">
                     <FiCheckCircle size={14} />
                     Answer
                   </label>

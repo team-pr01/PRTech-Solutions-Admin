@@ -17,6 +17,7 @@ import Staffs from "../pages/Dashboard/Admin/Staffs/Staffs";
 import AllLeads from "../pages/Dashboard/Admin/AllLeads/AllLeads";
 import Queries from "../pages/Dashboard/Admin/Queries/Queries";
 import Issues from "../pages/Dashboard/Admin/Issues/Issues";
+import IssueDetails from "../pages/Dashboard/Admin/Issues/IssueDetails";
 
 export const router = createBrowserRouter([
   // Main layout routes
@@ -88,6 +89,10 @@ export const router = createBrowserRouter([
       {
         path: "issues",
         element: <Issues />,
+      },
+      {
+        path: "issue/:id",
+        element: <IssueDetails />,
       },
 
       {

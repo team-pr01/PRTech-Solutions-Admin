@@ -4,7 +4,7 @@ import { baseApi } from "../../API/baseApi";
 const issuesApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // ========== ISSUES APIs ==========
-    
+
     // Get all issues with filters and pagination
     getAllIssues: builder.query({
       query: ({
@@ -15,8 +15,6 @@ const issuesApi = baseApi.injectEndpoints({
         priority,
         category,
         keyword,
-        dateFrom,
-        dateTo,
       }: {
         keyword?: string;
         limit?: number;
@@ -25,8 +23,6 @@ const issuesApi = baseApi.injectEndpoints({
         status?: string;
         priority?: string;
         category?: string;
-        dateFrom?: string;
-        dateTo?: string;
       } = {}) => {
         const params = new URLSearchParams();
 
@@ -37,8 +33,6 @@ const issuesApi = baseApi.injectEndpoints({
         if (status) params.append("status", status);
         if (priority) params.append("priority", priority);
         if (category) params.append("category", category);
-        if (dateFrom) params.append("dateFrom", dateFrom);
-        if (dateTo) params.append("dateTo", dateTo);
 
         return {
           url: `/issue?${params.toString()}`,
@@ -80,7 +74,7 @@ const issuesApi = baseApi.injectEndpoints({
         if (typeof page === "number") params.append("page", page.toString());
         if (status) params.append("status", status);
         if (priority) params.append("priority", priority);
-        
+
         return {
           url: `/issue/my-issues?${params.toString()}`,
           method: "GET",
@@ -102,10 +96,10 @@ const issuesApi = baseApi.injectEndpoints({
     }),
 
     // Update issue
-    updateIssue: builder.mutation<any, any>({
+    updateIssueStatus: builder.mutation<any, any>({
       query: ({ id, data }) => ({
-        url: `/issue/update/${id}`,
-        method: "PUT",
+        url: `/issue/update-status/${id}`,
+        method: "PATCH",
         body: data,
         credentials: "include",
       }),
@@ -117,17 +111,6 @@ const issuesApi = baseApi.injectEndpoints({
       query: (id) => ({
         url: `/issue/delete/${id}`,
         method: "DELETE",
-        credentials: "include",
-      }),
-      invalidatesTags: ["issue"],
-    }),
-
-    // Update issue status only
-    updateIssueStatus: builder.mutation<any, any>({
-      query: ({ id, status }) => ({
-        url: `/issue/status/${id}`,
-        method: "PATCH",
-        body: { status },
         credentials: "include",
       }),
       invalidatesTags: ["issue"],
@@ -173,14 +156,12 @@ const issuesApi = baseApi.injectEndpoints({
 });
 
 export const {
-  // Issues hooks
   useGetAllIssuesQuery,
   useGetSingleIssueQuery,
   useGetMyRaisedIssuesQuery,
   useAddIssueMutation,
-  useUpdateIssueMutation,
-  useDeleteIssueMutation,
   useUpdateIssueStatusMutation,
+  useDeleteIssueMutation,
   useGetIssueStatisticsQuery,
   useUploadIssueAttachmentsMutation,
   useDeleteIssueAttachmentMutation,
