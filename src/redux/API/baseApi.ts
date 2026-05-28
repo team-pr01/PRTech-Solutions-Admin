@@ -6,8 +6,8 @@ import type { FetchArgs } from "@reduxjs/toolkit/query/react";
 import { setUser } from "../Features/Auth/authSlice";
 import type { RootState } from "../store";
 
-// export const backendBaseUrl = "http://localhost:5000";
-export const backendBaseUrl = "https://prtech-solutions-server.vercel.app";
+export const backendBaseUrl = "http://localhost:5000";
+// export const backendBaseUrl = "https://prtech-solutions-server.vercel.app";
 const baseQuery = fetchBaseQuery({
   baseUrl: `${backendBaseUrl}/api/v1`,
   credentials: "include",
@@ -62,7 +62,9 @@ export const baseApi = createApi({
     "lead",
     "category",
     "account",
-    "niche"
+    "niche",
+    "query",
+    "issue",
   ],
   endpoints: () => ({}),
 });

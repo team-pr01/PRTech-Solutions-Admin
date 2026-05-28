@@ -1,5 +1,11 @@
 import React from "react";
-import { FiUsers, FiBriefcase, FiTrendingUp } from "react-icons/fi";
+import {
+  FiUsers,
+  FiBriefcase,
+  FiTrendingUp,
+  FiHelpCircle,
+  FiAlertCircle,
+} from "react-icons/fi";
 import { LuLayoutDashboard, LuFolderKanban } from "react-icons/lu";
 import { FiUserPlus } from "react-icons/fi";
 
@@ -44,6 +50,16 @@ export const adminDashboardLinks: DashboardLink[] = [
     label: "All Leads",
     path: "/dashboard/admin/all-leads",
     icon: <FiTrendingUp />,
+  },
+  {
+    label: "Queries",
+    path: "/dashboard/admin/queries",
+    icon: <FiHelpCircle />,
+  },
+  {
+    label: "Issues",
+    path: "/dashboard/admin/issues",
+    icon: <FiAlertCircle />,
   },
 ];
 
