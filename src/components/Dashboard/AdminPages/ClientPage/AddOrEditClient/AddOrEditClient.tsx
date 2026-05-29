@@ -53,6 +53,7 @@ type ClientFormData = {
     | "500+"
     | "1000+"
     | "unknown";
+  password: string;
 };
 
 type AddOrEditClientProps = {
@@ -527,6 +528,13 @@ const AddOrEditClient = ({
             isRequired={false}
           />
         </div>
+
+        <TextInput
+          label="Password"
+          placeholder="Enter password"
+          error={errors.password}
+          {...register("password")}
+        />
 
         {/* Form Actions */}
         <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">

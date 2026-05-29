@@ -81,6 +81,15 @@ const clientApi = baseApi.injectEndpoints({
       invalidatesTags: ["client"],
     }),
 
+    getSubordinatesClientById: builder.query({
+      query: (id) => ({
+        url: `/client/subordinates/${id}`,
+        method: "GET",
+        credentials: "include",
+      }),
+      providesTags: ["client"],
+    }),
+
     addSubordinate: builder.mutation<any, any>({
       query: ({ clientId, data }) => ({
         url: `/client/${clientId}/subordinate/add`,
@@ -119,6 +128,7 @@ export const {
   useAddClientMutation,
   useUpdateClientMutation,
   useDeleteClientMutation,
+  useGetSubordinatesClientByIdQuery,
   useAddSubordinateMutation,
   useUpdateSubordinateMutation,
   useDeleteSubordinateMutation,

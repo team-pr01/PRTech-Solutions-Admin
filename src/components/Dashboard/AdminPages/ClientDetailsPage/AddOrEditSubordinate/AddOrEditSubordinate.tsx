@@ -44,7 +44,7 @@ const AddOrEditSubordinate = ({
       name: "",
       email: "",
       phoneNumber: {
-        countryCode: "+1",
+        countryCode: "",
         phoneNumber: "",
       },
       designation: "",
@@ -117,11 +117,11 @@ const AddOrEditSubordinate = ({
   };
 
   return (
-    <div>
+    <div className="mt-5">
       <form onSubmit={handleSubmit(handleSubmitSubordinate)} className="space-y-4">
         {/* Name */}
         <TextInput
-          label="Name *"
+          label="Name"
           placeholder="Enter subordinate name"
           error={errors.name}
           {...register("name", {
@@ -152,7 +152,7 @@ const AddOrEditSubordinate = ({
           <div className="md:col-span-1">
             <TextInput
               label="Country Code"
-              placeholder="+1"
+              placeholder="ex: +880 or +91"
               error={errors.phoneNumber?.countryCode}
               {...register("phoneNumber.countryCode", {
                 required: "Country code is required when phone is provided",

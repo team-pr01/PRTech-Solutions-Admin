@@ -12,6 +12,7 @@ import {
   useGetSingleLeadByIdQuery,
   useUpdateLeadMutation,
 } from "../../../../redux/Features/Lead/leadApi";
+import { useGetAllNichesQuery } from "../../../../redux/Features/Niche/nicheApi";
 
 type SocialMedia = {
   platform: string;
@@ -66,18 +67,17 @@ type AddOrEditLeadProps = {
   leadId?: string;
   modalType: "add" | "edit";
   onClose: () => void;
-  niches: any;
 };
 
 const AddOrEditLead = ({
   leadId,
   modalType,
   onClose,
-  niches,
 }: AddOrEditLeadProps) => {
   const [selectedNiche, setSelectedNiche] = useState<any>(null);
   const [subNicheOptions, setSubNicheOptions] = useState<string[]>([]);
 
+   const { data: niches } = useGetAllNichesQuery({});
   const { data: leadData, isLoading: isLoadingLead } =
     useGetSingleLeadByIdQuery(leadId!, {
       skip: modalType !== "edit" || !leadId,
@@ -382,7 +382,7 @@ const AddOrEditLead = ({
             {/* Niche Dropdown */}
             <SelectDropdown
               label="Niche"
-              options={niches?.map((niche: any) => niche.name) || []}
+              options={niches?.data?.map((niche: any) => niche.name) || []}
               error={errors.niche}
               {...register("niche", {
                 required: "Niche is required",

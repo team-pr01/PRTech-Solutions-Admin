@@ -204,7 +204,7 @@ const PhaseDetails = ({
                       {phase.installments && phase.installments.length > 0 && (
                         <div className="text-xs text-gray-500">
                           <FiClock className="inline mr-1" size={12} />
-                          {phase.installments.length} installment(s) scheduled
+                          {phase.installments.length} installment(s) received
                         </div>
                       )}
 

@@ -10,7 +10,9 @@ import {
   useUpdateProjectMutation,
   useGetSingleProjectByIdQuery,
 } from "../../../../../redux/Features/Project/projectApi";
-import { useGetAllClientsQuery } from "../../../../../redux/Features/Client/clientApi";
+import {
+  useGetAllClientsQuery,
+} from "../../../../../redux/Features/Client/clientApi";
 import Textarea from "../../../../Reusable/TextArea/TextArea";
 
 type Installment = {
@@ -46,13 +48,6 @@ type Expenditure = {
   pendingAmount: number;
 };
 
-type ContactPerson = {
-  name: string;
-  countryCode: string;
-  phoneNumber: string;
-  isPrimary?: boolean;
-};
-
 type ProjectFormData = {
   name: string;
   projectType: string;
@@ -68,7 +63,6 @@ type ProjectFormData = {
   onGoingPhase?: string;
   timelineLink?: string;
   expenditures: Expenditure[];
-  contactPerson: ContactPerson[];
   notes?: string;
   clientId: string;
 };
@@ -90,6 +84,9 @@ const AddOrEditProject = ({
     useGetSingleProjectByIdQuery(id!, { skip: modalType !== "edit" || !id });
 
   const { data: clientsData } = useGetAllClientsQuery({ limit: 100, page: 1 });
+
+  // const { data } = useGetSubordinatesClientByIdQuery(selectedCLientId!);
+  // const subordinates = data?.data || [];
 
   const {
     register,
@@ -113,9 +110,6 @@ const AddOrEditProject = ({
       onGoingPhase: "",
       timelineLink: "",
       expenditures: [],
-      contactPerson: [
-        { name: "", countryCode: "", phoneNumber: "", isPrimary: true },
-      ],
       notes: "",
       clientId: "",
     },
@@ -128,15 +122,6 @@ const AddOrEditProject = ({
   } = useFieldArray({
     control,
     name: "expenditures",
-  });
-
-  const {
-    fields: contactFields,
-    append: appendContact,
-    remove: removeContact,
-  } = useFieldArray({
-    control,
-    name: "contactPerson",
   });
 
   const [addProject] = useAddProjectMutation();
@@ -185,9 +170,6 @@ const AddOrEditProject = ({
             totalAmount: exp.totalAmount,
             pendingAmount: exp.pendingAmount,
           })) || [],
-        contactPerson: project.contactPerson?.length
-          ? project.contactPerson
-          : [{ name: "", countryCode: "", phoneNumber: "", isPrimary: true }],
         notes: project.notes || "",
         clientId: project.clientId?._id || project.clientId || "",
       });
@@ -196,13 +178,6 @@ const AddOrEditProject = ({
 
   const handleSubmitProject = async (data: ProjectFormData) => {
     try {
-      // Ensure at least one primary contact
-      const hasPrimaryContact = data.contactPerson.some(
-        (contact) => contact.isPrimary,
-      );
-      if (!hasPrimaryContact && data.contactPerson.length > 0) {
-        data.contactPerson[0].isPrimary = true;
-      }
 
       // Calculate total pending amount from phases
       const totalPhasePending = data.phases.reduce(
@@ -287,6 +262,7 @@ const AddOrEditProject = ({
             })}
           />
 
+            {/* Client */}
           <div className="space-y-1">
             <label className="block text-sm font-medium text-gray-700">
               Client <span className="text-primary-10">*</span>
@@ -295,7 +271,9 @@ const AddOrEditProject = ({
               className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-10 focus:border-transparent transition duration-300 ${
                 errors.clientId ? "border-red-500" : "border-gray-300"
               }`}
-              {...register("clientId", { required: "Client is required" })}
+              {...register("clientId", {
+                required: "Client is required"
+              })}
             >
               <option value="">Select client</option>
               {clientsData?.data?.data?.map((client: any) => (
@@ -469,94 +447,6 @@ const AddOrEditProject = ({
                     min: { value: 0, message: "Amount must be positive" },
                   })}
                 />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Contact Persons Section */}
-        <div className="space-y-4">
-          <div className="flex justify-between items-center border-b border-gray-200 pb-2">
-            <h3 className="text-lg font-semibold text-gray-800">
-              Contact Persons
-            </h3>
-            <button
-              type="button"
-              onClick={() =>
-                appendContact({
-                  name: "",
-                  countryCode: "+1",
-                  phoneNumber: "",
-                  isPrimary: false,
-                })
-              }
-              className="flex items-center gap-1 text-sm text-primary-10 hover:text-primary-20"
-            >
-              <FiPlus size={16} /> Add Contact
-            </button>
-          </div>
-
-          {contactFields.map((field, index) => (
-            <div
-              key={field.id}
-              className="p-4 border border-gray-200 rounded-lg space-y-3"
-            >
-              <div className="flex justify-between items-start">
-                <h4 className="font-medium text-gray-700">
-                  Contact {index + 1}
-                </h4>
-                {contactFields.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeContact(index)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    <FiTrash2 size={18} />
-                  </button>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 gap-3">
-                <TextInput
-                  label="Name"
-                  placeholder="Contact name"
-                  error={errors.contactPerson?.[index]?.name}
-                  {...register(`contactPerson.${index}.name`, {
-                    required: "Name is required",
-                  })}
-                />
-
-                <div className="grid grid-cols-2 gap-2">
-                  <TextInput
-                    label="Country Code"
-                    placeholder="+1"
-                    {...register(`contactPerson.${index}.countryCode`)}
-                  />
-
-                  <TextInput
-                    label="Phone Number"
-                    placeholder="Phone number"
-                    error={errors.contactPerson?.[index]?.phoneNumber}
-                    {...register(`contactPerson.${index}.phoneNumber`, {
-                      required: "Phone number is required",
-                    })}
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id={`primary-contact-${index}`}
-                  className="w-4 h-4 text-primary-10 rounded focus:ring-primary-10"
-                  {...register(`contactPerson.${index}.isPrimary`)}
-                />
-                <label
-                  htmlFor={`primary-contact-${index}`}
-                  className="text-sm text-gray-700"
-                >
-                  Set as primary contact
-                </label>
               </div>
             </div>
           ))}

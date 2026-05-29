@@ -607,7 +607,6 @@ const Leads = () => {
           leadId={selectedLeadId}
           modalType={modalType}
           onClose={() => setIsAddOrEditLeadModalOpen(false)}
-          niches={niche?.data}
         />
       </Modal>
     </div>
