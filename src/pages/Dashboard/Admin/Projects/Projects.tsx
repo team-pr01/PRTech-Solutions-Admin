@@ -199,7 +199,12 @@ const Projects = () => {
     financial: (
       <div className="space-y-1">
         <p className="font-semibold text-gray-800">
-          Total Price: {formatCurrency(project.price, project.priceCurrency)}
+          Total Price: {formatCurrency(project.price, project.priceCurrency)}{" "}
+          {project?.pendingAmount === 0 && (
+            <div className="bg-green-100 text-green-600 px-2 py-1 rounded-xl text-xs w-fit">
+              Paid
+            </div>
+          )}
         </p>
         {project.pendingAmount !== undefined && project.pendingAmount > 0 && (
           <p className="text-sm text-red-600">
