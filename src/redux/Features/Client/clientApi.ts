@@ -119,6 +119,16 @@ const clientApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["client"],
     }),
+
+    addGift: builder.mutation<any, any>({
+      query: ({ clientId, data }) => ({
+        url: `/client/gifts/add/${clientId}`,
+        method: "POST",
+        body: data,
+        credentials: "include",
+      }),
+      invalidatesTags: ["client"],
+    }),
   }),
 });
 
@@ -132,4 +142,5 @@ export const {
   useAddSubordinateMutation,
   useUpdateSubordinateMutation,
   useDeleteSubordinateMutation,
+  useAddGiftMutation
 } = clientApi;

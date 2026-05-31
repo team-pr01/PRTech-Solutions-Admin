@@ -17,6 +17,7 @@ import {
   FiTrash2,
   FiUserPlus,
   FiStar,
+  FiGift,
 } from "react-icons/fi";
 import { FaLinkedin, FaTwitter, FaFacebook } from "react-icons/fa";
 import { formatDate } from "../../../../utils/formatDate";
@@ -26,6 +27,7 @@ import Modal from "../../../../components/Reusable/Modal/Modal";
 import AddOrEditSubordinate from "../../../../components/Dashboard/AdminPages/ClientDetailsPage/AddOrEditSubordinate/AddOrEditSubordinate";
 import { BiPencil } from "react-icons/bi";
 import LogoLoader from "../../../../components/Reusable/LogoLoader/LogoLoader";
+import AdOrEditGift from "../../../../components/Dashboard/AdminPages/ClientDetailsPage/AdOrEditGift/AdOrEditGift";
 
 const ClientDetails = () => {
   const { id } = useParams();
@@ -34,9 +36,12 @@ const ClientDetails = () => {
     string | null
   >(null);
   const [selectedSubordinate, setSelectedSubordinate] = useState<any>(null);
+  // const [selectedGiftId, setSelectedGiftId] = useState<any>(null);
   const [modalType, setModalType] = useState<"add" | "edit">("add");
   const [deleteSubordinate] = useDeleteSubordinateMutation();
   const [isAddOrEditSubordinateModalOpen, setIsAddOrEditSubordinateModalOpen] =
+    useState(false);
+  const [isAddOrEditGiftModalOpen, setIsAddOrEditGiftModalOpen] =
     useState(false);
 
   const client = data?.data;
@@ -88,7 +93,7 @@ const ClientDetails = () => {
   if (!client) {
     return (
       <div className="flex justify-center items-center h-64">
-       <LogoLoader/>
+        <LogoLoader />
       </div>
     );
   }
@@ -116,16 +121,27 @@ const ClientDetails = () => {
             </div>
             <p className="text-gray-600 max-w-2xl">{client.notes}</p>
           </div>
-          <button
-            onClick={() => {
-              setModalType("add");
-              setIsAddOrEditSubordinateModalOpen(true);
-            }}
-            className="flex items-center gap-2 px-4 py-2 bg-primary-10 text-white rounded-lg hover:bg-primary-20 transition duration-300"
-          >
-            <FiUserPlus size={18} />
-            Add Subordinate
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => {
+                setModalType("add");
+                setIsAddOrEditSubordinateModalOpen(true);
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-primary-10 text-white rounded-lg hover:bg-primary-20 transition duration-300"
+            >
+              <FiUserPlus size={18} />
+              Add Subordinate
+            </button>
+            <button
+              onClick={() => {
+                setIsAddOrEditGiftModalOpen(true);
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-primary-10 text-white rounded-lg hover:bg-primary-20 transition duration-300"
+            >
+              <FiGift size={18} />
+              Add Gift
+            </button>
+          </div>
         </div>
       </div>
 
@@ -309,6 +325,96 @@ const ClientDetails = () => {
               </div>
             )}
           </div>
+
+          {/* Gifts Section */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <FiGift className="text-primary-10" />
+              Gifts & Rewards
+              <span className="text-sm text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                {client.gifts?.length || 0}
+              </span>
+            </h2>
+
+            {client.gifts?.length > 0 ? (
+              <div className="grid grid-cols-2 gap-4">
+                {client.gifts.map((gift: any, index: number) => (
+                  <div
+                    key={gift._id || index}
+                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="space-y-2 flex-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold text-gray-800">
+                            {gift.title}
+                          </h3>
+                          <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
+                            {gift.currency}
+                          </span>
+                        </div>
+
+                        {/* Price */}
+                        <div className="text-sm text-gray-600">
+                          <span className="font-medium">
+                            {gift.currency === "BDT"
+                              ? "৳"
+                              : gift.currency === "INR"
+                                ? "₹"
+                                : "$"}
+                            {gift.totalAmount?.toLocaleString() || 0}
+                          </span>
+                        </div>
+
+                        {/* Sent Date */}
+                        {gift.sentDate && (
+                          <div className="flex items-center gap-2 text-sm text-gray-500">
+                            <FiCalendar size={14} />
+                            <span>Sent: {formatDate(gift.sentDate)}</span>
+                          </div>
+                        )}
+
+                        {/* Notes if any */}
+                        {gift.notes && (
+                          <div className="flex items-start gap-2 text-sm text-gray-500 mt-2">
+                            <FiMessageSquare size={14} className="mt-0.5" />
+                            <span>{gift.notes}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Action Buttons - Optional */}
+                      {/* <div className="flex items-center gap-2">
+                        <button
+                          className="text-blue-500 hover:text-blue-700 transition"
+                          title="Edit gift"
+                        >
+                          <BiPencil size={18} />
+                        </button>
+                        <button
+                          className="text-red-500 hover:text-red-700 transition"
+                          title="Delete gift"
+                        >
+                          <FiTrash2 size={18} />
+                        </button>
+                      </div> */}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <FiGift className="mx-auto text-4xl mb-2" />
+                <p>No gifts added yet</p>
+                <button
+                  // onClick={() => setIsAddOrEditGiftModalOpen(true)}
+                  className="mt-2 text-primary-10 hover:underline"
+                >
+                  Add your first gift
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Right Column - 1 column */}
@@ -483,6 +589,20 @@ const ClientDetails = () => {
           modalType={modalType}
           subordinateData={selectedSubordinate}
           onClose={() => setIsAddOrEditSubordinateModalOpen(false)}
+        />
+      </Modal>
+
+      <Modal
+        heading={"Add Gift"}
+        isModalOpen={isAddOrEditGiftModalOpen}
+        setIsModalOpen={setIsAddOrEditGiftModalOpen}
+      >
+        <AdOrEditGift
+          clientId={id as string}
+          // giftId={selectedGiftId as string}
+          modalType={"add"}
+          // subordinateData={selectedSubordinate}
+          onClose={() => setIsAddOrEditGiftModalOpen(false)}
         />
       </Modal>
     </div>
