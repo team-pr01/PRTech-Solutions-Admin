@@ -5,7 +5,7 @@ import { ICONS } from "../../../assets";
 
 interface ButtonProps {
   label?: any;
-  variant?: "primary" | "secondary" | "tertiary" | "quaternary" | string;
+  variant?: "primary" | "secondary" | "tertiary" | "quaternary" | "warning" | string;
   onClick?: any;
   icon?: React.ReactNode;
   iconBg?: string;
@@ -24,6 +24,8 @@ const variantClasses: Record<string, string> = {
     "bg-white text-primary-10 border border-primary-10 hover:bg-primary-10 hover:text-white",
   quaternary:
     "bg-primary-10 text-white border border-primary-10 hover:bg-white hover:text-primary-10",
+  warning:
+    "bg-white text-red-600 border border-red-600 hover:bg-red-500 hover:text-white",
 };
 
 const Button: React.FC<ButtonProps> = ({

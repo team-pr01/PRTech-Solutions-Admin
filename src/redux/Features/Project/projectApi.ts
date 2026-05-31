@@ -141,6 +141,26 @@ const projectApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["project"],
     }),
+
+    addExpenditure: builder.mutation<any, any>({
+      query: ({ projectId, data }) => ({
+        url: `/project/${projectId}/expenditure/add`,
+        method: "POST",
+        body: data,
+        credentials: "include",
+      }),
+      invalidatesTags: ["project"],
+    }),
+
+    addPhaseInExpenditure: builder.mutation<any, any>({
+      query: ({ projectId, expenditureId, data }) => ({
+        url: `/project/${projectId}/expenditure/${expenditureId}/phases/add`,
+        method: "POST",
+        body: data,
+        credentials: "include",
+      }),
+      invalidatesTags: ["project"],
+    }),
   }),
 });
 
@@ -157,4 +177,6 @@ export const {
   useAddInstallmentMutation,
   useUpdateInstallmentMutation,
   useDeletePhaseMutation,
+  useAddExpenditureMutation,
+  useAddPhaseInExpenditureMutation,
 } = projectApi;

@@ -16,18 +16,32 @@ import {
   FiCheckCircle,
   FiXCircle,
   FiLoader,
+  FiPlus,
 } from "react-icons/fi";
 import { formatDate } from "../../../../utils/formatDate";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import Button from "../../../../components/Reusable/Button/Button";
+import Modal from "../../../../components/Reusable/Modal/Modal";
+import AddExpenditure from "../../../../components/Dashboard/AdminPages/ProjectPage/AddExpenditure/AddExpenditure";
+import { useState } from "react";
+import AddPhaseInExpenditure from "../../../../components/Dashboard/AdminPages/ProjectPage/AddExpenditure/AddPhaseInExpenditure";
 
 const ProjectDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data, isLoading } = useGetSingleProjectByIdQuery(id!);
   const [deleteProject] = useDeleteProjectMutation();
+  const [isAddExpenditureModalOpen, setIsAddExpenditureModalOpen] =
+    useState<boolean>(false);
+  const [
+    isAddPhaseInExpenditureModalOpen,
+    setIsAddPhaseInExpenditureModalOpen,
+  ] = useState<boolean>(false);
+  const [selectedExpenditureId, setSelectedExpenditureId] = useState<string>("");
 
   const project = data?.data;
+  console.log(project);
 
   const handleDelete = async () => {
     if (window.confirm(`Are you sure you want to delete "${project?.name}"?`)) {
@@ -117,12 +131,11 @@ const ProjectDetails = () => {
             )}
           </div>
           <div className="flex gap-2">
-            <button
-              onClick={handleDelete}
-              className="px-4 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-50 transition"
-            >
-              Delete
-            </button>
+            <Button onClick={handleDelete} variant="warning" label={"Delete"} />
+            <Button
+              onClick={() => setIsAddExpenditureModalOpen(true)}
+              label={"Add Expenditure"}
+            />
           </div>
         </div>
       </div>
@@ -300,6 +313,138 @@ const ProjectDetails = () => {
               </div>
             </div>
           )}
+
+          {/* Expenditures Section */}
+          {project.expenditures && project.expenditures.length > 0 && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                  <FiDollarSign className="text-primary-10" />
+                  Expenditures
+                  <span className="text-sm text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                    {project.expenditures.length}
+                  </span>
+                </h2>
+                <button
+                  onClick={() => {
+                    // Open modal to add new expenditure
+                    setIsAddExpenditureModalOpen(true);
+                  }}
+                  className="flex items-center gap-1 text-sm bg-primary-10 text-white px-3 py-1.5 rounded-lg hover:bg-primary-20 transition"
+                >
+                  <FiPlus size={14} />
+                  Add Expenditure
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {project.expenditures.map(
+                  (expenditure: any, expIndex: number) => (
+                    <div
+                      key={expenditure._id || expIndex}
+                      className="border border-gray-200 rounded-lg overflow-hidden"
+                    >
+                      {/* Expenditure Header */}
+                      <div className="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
+                        <div>
+                          <h3 className="font-semibold text-gray-800">
+                            {expenditure.description}
+                          </h3>
+                          <div className="flex items-center gap-3 mt-1">
+                            <span className="text-xs text-gray-500">
+                              Total:{" "}
+                              <span className="font-medium text-gray-700">
+                                {formatCurrency(
+                                  expenditure.totalAmount,
+                                  project.priceCurrency,
+                                )}
+                              </span>
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              Pending:{" "}
+                              <span className="font-medium text-red-600">
+                                {formatCurrency(
+                                  expenditure.pendingAmount,
+                                  project.priceCurrency,
+                                )}
+                              </span>
+                            </span>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => {
+                            setSelectedExpenditureId(expenditure._id);
+                            setIsAddPhaseInExpenditureModalOpen(true);
+                          }}
+                          className="flex items-center gap-1 text-xs text-primary-10 hover:text-primary-20 border border-primary-10 px-2 py-1 rounded-lg hover:bg-primary-10/5 transition"
+                        >
+                          <FiPlus size={12} />
+                          Add Phase
+                        </button>
+                      </div>
+
+                      {/* Phases List */}
+                      {expenditure.phases && expenditure.phases.length > 0 ? (
+                        <div className="divide-y divide-gray-100">
+                          {expenditure.phases.map(
+                            (phase: any, phaseIndex: number) => (
+                              <div
+                                key={phase._id || phaseIndex}
+                                className="px-4 py-3 hover:bg-gray-50 transition"
+                              >
+                                <div className="flex justify-between items-start">
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-2">
+                                      <p className="font-medium text-gray-800">
+                                        {phase.title}
+                                      </p>
+                                      <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                                        {phase.currency}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
+                                      <span>
+                                        Paid:{" "}
+                                        {formatCurrency(
+                                          phase.paidAmount,
+                                          phase.currency,
+                                        )}
+                                      </span>
+                                      <span>
+                                        Date: {formatDate(phase.date)}
+                                      </span>
+                                      <span>Method: {phase.paymentMethod}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ),
+                          )}
+                        </div>
+                      ) : (
+                        <div className="px-4 py-6 text-center text-gray-500">
+                          <FiDollarSign
+                            className="mx-auto text-gray-300 mb-2"
+                            size={24}
+                          />
+                          <p className="text-sm">No phases added yet</p>
+                          <button
+                            // onClick={() => {
+                            //   setSelectedExpenditureId(expenditure._id);
+                            //   setIsAddPhaseModalOpen(true);
+                            // }}
+                            className="mt-2 text-xs text-primary-10 hover:underline"
+                          >
+                            Add your first phase
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ),
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right Column - 1 column */}
@@ -461,6 +606,33 @@ const ProjectDetails = () => {
           </div>
         </div>
       </div>
+
+      {/* Add Expenditure Modal */}
+      <Modal
+        heading={"Add Expenditure"}
+        isModalOpen={isAddExpenditureModalOpen}
+        setIsModalOpen={setIsAddExpenditureModalOpen}
+      >
+        <AddExpenditure
+          projectId={id as string}
+          onClose={() => setIsAddExpenditureModalOpen(false)}
+        />
+      </Modal>
+
+      {/* Add Phase to Expenditure Modal */}
+      <Modal
+        heading="Add Phase to Expenditure"
+        isModalOpen={isAddPhaseInExpenditureModalOpen}
+        setIsModalOpen={setIsAddPhaseInExpenditureModalOpen}
+      >
+        <AddPhaseInExpenditure
+          projectId={id as string}
+          expenditureId={selectedExpenditureId!}
+          onClose={() => {
+            setIsAddPhaseInExpenditureModalOpen(false);
+          }}
+        />
+      </Modal>
     </div>
   );
 };

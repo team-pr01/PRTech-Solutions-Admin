@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { toast } from "react-hot-toast";
-import { FiPlus, FiTrash2 } from "react-icons/fi";
 import TextInput from "../../../../Reusable/TextInput/TextInput";
 import SelectDropdown from "../../../../Reusable/SelectDropdown/SelectDropdown";
 import {
@@ -42,12 +41,6 @@ type Phase = {
   installments: Installment[];
 };
 
-type Expenditure = {
-  description: string;
-  totalAmount: number;
-  pendingAmount: number;
-};
-
 type ProjectFormData = {
   name: string;
   projectType: string;
@@ -57,12 +50,9 @@ type ProjectFormData = {
   deadline?: string;
   status: "Ongoing" | "Completed" | "On Hold" | "Yet to Start";
   priceCurrency: string;
-  price: number;
-  pendingAmount: number;
   phases: Phase[];
   onGoingPhase?: string;
   timelineLink?: string;
-  expenditures: Expenditure[];
   notes?: string;
   clientId: string;
 };
@@ -90,7 +80,6 @@ const AddOrEditProject = ({
 
   const {
     register,
-    control,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
@@ -104,24 +93,12 @@ const AddOrEditProject = ({
       deadline: "",
       status: "Yet to Start",
       priceCurrency: "",
-      price: 0,
-      pendingAmount: 0,
       phases: [],
       onGoingPhase: "",
       timelineLink: "",
-      expenditures: [],
       notes: "",
       clientId: "",
     },
-  });
-
-  const {
-    fields: expenditureFields,
-    append: appendExpenditure,
-    remove: removeExpenditure,
-  } = useFieldArray({
-    control,
-    name: "expenditures",
   });
 
   const [addProject] = useAddProjectMutation();
@@ -144,8 +121,6 @@ const AddOrEditProject = ({
         deadline: project.deadline || "",
         status: project.status || "Yet to Start",
         priceCurrency: project.priceCurrency || "USD",
-        price: project.price || 0,
-        pendingAmount: project.pendingAmount || 0,
         phases:
           project.phases?.map((phase: any) => ({
             name: phase.name,
@@ -164,12 +139,6 @@ const AddOrEditProject = ({
           })) || [],
         onGoingPhase: project.onGoingPhase || "",
         timelineLink: project.timelineLink || "",
-        expenditures:
-          project.expenditures?.map((exp: any) => ({
-            description: exp.description,
-            totalAmount: exp.totalAmount,
-            pendingAmount: exp.pendingAmount,
-          })) || [],
         notes: project.notes || "",
         clientId: project.clientId?._id || project.clientId || "",
       });
@@ -179,16 +148,9 @@ const AddOrEditProject = ({
   const handleSubmitProject = async (data: ProjectFormData) => {
     try {
 
-      // Calculate total pending amount from phases
-      const totalPhasePending = data.phases.reduce(
-        (sum, phase) => sum + (phase.pendingAmount || 0),
-        0,
-      );
-
       // Convert date strings to ISO format
       const payload = {
         ...data,
-        pendingAmount: data.pendingAmount || totalPhasePending,
         startDate: data.startDate
           ? new Date(data.startDate).toISOString()
           : undefined,
@@ -351,105 +313,11 @@ const AddOrEditProject = ({
             Financial Information
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <SelectDropdown
               label="Currency"
               options={currencyOptions}
               {...register("priceCurrency")}
             />
-
-            <TextInput
-              label="Total Price"
-              type="number"
-              placeholder="Enter total price"
-              error={errors.price}
-              {...register("price")}
-              isRequired={false}
-            />
-
-            <TextInput
-              label="Pending Amount"
-              type="number"
-              placeholder="Enter pending amount"
-              error={errors.pendingAmount}
-              {...register("pendingAmount")}
-              isRequired={false}
-            />
-          </div>
-        </div>
-        {/* Expenditure Section */}
-        <div className="space-y-4">
-          <div className="flex justify-between items-center border-b border-gray-200 pb-2">
-            <h3 className="text-lg font-semibold text-gray-800">Expenditure</h3>
-            <button
-              type="button"
-              onClick={() =>
-                appendExpenditure({
-                  description: "",
-                  totalAmount: 0,
-                  pendingAmount: 0,
-                })
-              }
-              className="flex items-center gap-1 text-sm text-primary-10 hover:text-primary-20"
-            >
-              <FiPlus size={16} /> Add Expenditure
-            </button>
-          </div>
-
-          {expenditureFields.map((field, index) => (
-            <div
-              key={field.id}
-              className="p-4 border border-gray-200 rounded-lg space-y-3"
-            >
-              <div className="flex justify-between items-start">
-                <h4 className="font-medium text-gray-700">
-                  Expenditure {index + 1}
-                </h4>
-                <button
-                  type="button"
-                  onClick={() => removeExpenditure(index)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  <FiTrash2 size={18} />
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <TextInput
-                  label="Description"
-                  placeholder="Enter description"
-                  error={errors.expenditures?.[index]?.description}
-                  {...register(`expenditures.${index}.description`, {
-                    required: "Description is required",
-                  })}
-                />
-
-                <TextInput
-                  label="Total Amount"
-                  type="number"
-                  placeholder="Enter total amount"
-                  error={errors.expenditures?.[index]?.totalAmount}
-                  {...register(`expenditures.${index}.totalAmount`, {
-                    required: "Total amount is required",
-                    valueAsNumber: true,
-                    min: { value: 0, message: "Amount must be positive" },
-                  })}
-                />
-
-                <TextInput
-                  label="Pending Amount"
-                  type="number"
-                  placeholder="Enter pending amount"
-                  error={errors.expenditures?.[index]?.pendingAmount}
-                  {...register(`expenditures.${index}.pendingAmount`, {
-                    required: "Pending amount is required",
-                    valueAsNumber: true,
-                    min: { value: 0, message: "Amount must be positive" },
-                  })}
-                />
-              </div>
-            </div>
-          ))}
         </div>
 
         {/* Timeline Link */}
