@@ -16,6 +16,7 @@ import Button from "../../../../Reusable/Button/Button";
 type TFormData = {
   name: string;
   email: string;
+  countryCode: string;
   phoneNumber: string;
   jobRole: string;
   gender: string;
@@ -66,6 +67,7 @@ const AddOrUpdateStaffModal: React.FC<TAddOrUpdateStaffModalProps> = ({
     if (modalType === "edit" && defaultValues) {
       setValue("name", defaultValues?.userId?.name);
       setValue("email", defaultValues?.userId?.email);
+      setValue("countryCode", defaultValues?.userId?.countryCode);
       setValue("phoneNumber", defaultValues?.userId?.phoneNumber);
       setValue("jobRole", defaultValues?.jobRole);
       setValue("gender", defaultValues?.userId?.gender);
@@ -151,15 +153,26 @@ const AddOrUpdateStaffModal: React.FC<TAddOrUpdateStaffModalProps> = ({
               })}
             />
 
-            {/* Phone */}
-            <TextInput
-              label="Phone Number"
-              placeholder="Enter phone number"
-              error={errors.phoneNumber}
-              {...register("phoneNumber", {
-                required: "Phone number is required",
-              })}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <TextInput
+                label="Country Code"
+                placeholder="ex: +880 or +91"
+                error={errors.countryCode}
+                {...register("countryCode", {
+                  required: "Country code is required when phone is provided",
+                  pattern: {
+                    value: /^\+\d{1,3}$/,
+                    message: "Invalid country code (e.g., +1, +44, +880)",
+                  },
+                })}
+              />
+              <TextInput
+                label="Phone Number"
+                placeholder="Enter phone number"
+                error={errors.phoneNumber}
+                {...register("phoneNumber")}
+              />
+            </div>
 
             {/* Job Role */}
             <TextInput
