@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useCurrentUser } from "../redux/Features/Auth/authSlice";
-import type { ReactNode } from "react";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -12,34 +12,35 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const user = useSelector(useCurrentUser) as any;
   const location = useLocation();
 
-  // Redirect unauthenticated users trying to access dashboard
-  if (!user && location.pathname.startsWith("/dashboard")) {
+  // Not logged in
+  if (!user) {
     return <Navigate to="/" replace />;
   }
 
-  // Role-based access map
-  const roleAccess: Record<string, string> = {
-    admin: "/dashboard/admin",
-    staff: "/dashboard/staff",
-  };
+  const currentPath = location.pathname;
 
-  if (user) {
-    const allowedBase = roleAccess[user.role];
-    const currentPath = location.pathname;
-
-    // Prevent user from entering another role’s dashboard
-    if (
-      currentPath.startsWith("/dashboard") &&
-      allowedBase &&
-      !currentPath.startsWith(allowedBase)
-    ) {
-      // Redirect to their own dashboard home
-      return <Navigate to={`${allowedBase}/home`} replace />;
+  // Admin access
+  if (user.role === "admin") {
+    // Prevent admin from accessing staff routes
+    if (currentPath.startsWith("/leads")) {
+      return <Navigate to="/dashboard/admin/home" replace />;
     }
+
+    return <>{children}</>;
   }
 
-  // If authorized, render the protected content
-  return <>{children}</>;
+  // Staff access
+  if (user.role === "staff") {
+    // Staff can only access /dashboard/staff/leads
+    if (!currentPath.startsWith("/dashboard/staff/leads")) {
+      return <Navigate to="/dashboard/staff/leads" replace />;
+    }
+
+    return <>{children}</>;
+  }
+
+  // Unknown role
+  return <Navigate to="/" replace />;
 };
 
 export default ProtectedRoute;

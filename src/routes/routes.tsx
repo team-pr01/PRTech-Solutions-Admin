@@ -105,9 +105,7 @@ export const router = createBrowserRouter([
   {
     path: "dashboard/staff",
     element: (
-      <ProtectedRoute>
         <DashboardLayout />
-      </ProtectedRoute>
     ),
     errorElement: <ErrorComponent />,
     children: [

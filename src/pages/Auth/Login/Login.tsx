@@ -38,6 +38,7 @@ const Login = () => {
           setUser({ user: res?.data?.user, token: res?.data?.accessToken }),
         );
       }
+      
       if (res?.data?.user?.role === "admin") {
         navigate("/dashboard/admin/home");
       } else if (res?.data?.user?.role === "staff") {

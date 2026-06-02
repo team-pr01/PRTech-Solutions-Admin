@@ -75,6 +75,7 @@ const AddOrEditLead = ({
   onClose,
 }: AddOrEditLeadProps) => {
   const [selectedNiche, setSelectedNiche] = useState<any>(null);
+  console.log(selectedNiche);
   const [subNicheOptions, setSubNicheOptions] = useState<string[]>([]);
 
    const { data: niches } = useGetAllNichesQuery({});
@@ -238,7 +239,7 @@ const AddOrEditLead = ({
   // Handle niche selection
   const handleNicheChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedNicheName = e.target.value;
-    const foundNiche = niches.find(
+    const foundNiche = niches?.data?.find(
       (niche: any) => niche.name === selectedNicheName,
     );
 
