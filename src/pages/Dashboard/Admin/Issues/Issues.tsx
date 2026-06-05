@@ -72,14 +72,6 @@ const Issues = () => {
   const [deleteQuery] = useDeleteIssueMutation();
   const [updateIssueStatus] = useUpdateIssueStatusMutation();
 
-  // Table headers
-  const issueTableHeaders: TableHead[] = [
-    { key: "issueInfo", label: "Query Info" },
-    { key: "raisedBy", label: "Raised By" },
-    { key: "priority", label: "Priority" },
-    { key: "status", label: "Status" },
-    { key: "createdAt", label: "Created Date" },
-  ];
 
   // Handle delete query
   const handleDeleteQuery = async (id: string, subject: string) => {
@@ -116,6 +108,16 @@ const Issues = () => {
     }
   };
 
+    // Table headers
+  const issueTableHeaders: TableHead[] = [
+    { key: "issueInfo", label: "Query Info" },
+    { key: "raisedBy", label: "Raised By" },
+    { key: "project", label: "Project" },
+    { key: "priority", label: "Priority" },
+    { key: "status", label: "Status" },
+    { key: "createdAt", label: "Created Date" },
+  ];
+
   // Format table data
   const tableData = data?.data?.data?.map((query: any) => ({
     ...query,
@@ -151,6 +153,9 @@ const Issues = () => {
         </p>
       </div>
     ),
+
+    // Column: Project
+    project: query.project?.name,
 
     // Column: Priority
     priority: (
