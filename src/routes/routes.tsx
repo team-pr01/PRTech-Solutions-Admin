@@ -18,6 +18,7 @@ import AllLeads from "../pages/Dashboard/Admin/AllLeads/AllLeads";
 import Queries from "../pages/Dashboard/Admin/Queries/Queries";
 import Issues from "../pages/Dashboard/Admin/Issues/Issues";
 import IssueDetails from "../pages/Dashboard/Admin/Issues/IssueDetails";
+import MyCalendar from "../pages/Dashboard/Admin/MyCalendar/MyCalendar";
 
 export const router = createBrowserRouter([
   // Main layout routes
@@ -93,6 +94,10 @@ export const router = createBrowserRouter([
       {
         path: "issue/:id",
         element: <IssueDetails />,
+      },
+      {
+        path: "my-calendar",
+        element: <MyCalendar />,
       },
 
       {

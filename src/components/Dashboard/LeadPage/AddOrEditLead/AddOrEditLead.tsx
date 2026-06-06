@@ -75,7 +75,6 @@ const AddOrEditLead = ({
   onClose,
 }: AddOrEditLeadProps) => {
   const [selectedNiche, setSelectedNiche] = useState<any>(null);
-  console.log(selectedNiche);
   const [subNicheOptions, setSubNicheOptions] = useState<string[]>([]);
 
    const { data: niches } = useGetAllNichesQuery({});
