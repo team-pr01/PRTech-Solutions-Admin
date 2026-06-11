@@ -245,6 +245,8 @@ const Issues = () => {
       <option value="pending">Pending</option>
       <option value="answered">Answered</option>
       <option value="closed">Closed</option>
+      <option value="needToDiscuss">Need to Discuss</option>
+      <option value="cancelled">Cancelled</option>
     </select>
   );
 
