@@ -28,6 +28,7 @@ import Button from "../../../components/Reusable/Button/Button";
 import AddOrEditLead from "../../../components/Dashboard/LeadPage/AddOrEditLead/AddOrEditLead";
 import { useGetAllNichesQuery } from "../../../redux/Features/Niche/nicheApi";
 import Niche from "../../../components/Dashboard/LeadPage/Niche/Niche";
+import AddQuickLead from "../../../components/Dashboard/LeadPage/AddQuickLead/AddQuickLead";
 
 const Leads = () => {
   const navigate = useNavigate();
@@ -58,6 +59,8 @@ const Leads = () => {
   const [nicheFilter, setNicheFilter] = useState<string>(""); // Change from 'category' to 'nicheFilter'
   const [subNicheFilter, setSubNicheFilter] = useState<string>("");
   const [availableSubNiches, setAvailableSubNiches] = useState<string[]>([]);
+  const [isAddQuickLeadModalOpen, setIsAddQuickLeadModalOpen] =
+    useState<boolean>(false);
 
   const [deleteLead] = useDeleteLeadMutation();
 
@@ -105,8 +108,8 @@ const Leads = () => {
     { key: "createdAt", label: "Created Date" },
   ];
 
-  const handleDeleteLead = async (leadId: string, businessName: string) => {
-    if (window.confirm(`Are you sure you want to delete "${businessName}"?`)) {
+  const handleDeleteLead = async (leadId: string) => {
+    if (window.confirm(`Are you sure you want to delete?`)) {
       toast.promise(
         (async () => {
           const result = await deleteLead(leadId).unwrap();
@@ -114,8 +117,8 @@ const Leads = () => {
           return result;
         })(),
         {
-          loading: `Deleting lead "${businessName}"...`,
-          success: `Lead "${businessName}" deleted successfully`,
+          loading: `Deleting lead...`,
+          success: `Lead deleted successfully`,
           error: (error: any) =>
             error?.data?.message || "Failed to delete lead",
         },
@@ -146,7 +149,19 @@ const Leads = () => {
     // Column: Business Info
     businessInfo: (
       <div className="space-y-1">
-        <p className="font-semibold text-gray-800">{lead.businessName}</p>
+        {lead.businessName && (
+          <p className="font-semibold text-gray-800">{lead.businessName}</p>
+        )}
+        {lead.quickLink && (
+          <a
+            href={lead.quickLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-primary-10 underline"
+          >
+            Click here
+          </a>
+        )}
         {lead.businessContactNumber !== lead.ownerContactNumber && (
           <p className="text-xs text-gray-500">
             Business: {lead.businessContactNumber}
@@ -202,7 +217,7 @@ const Leads = () => {
       <div className="space-y-1">
         <div className="flex items-center gap-1 text-sm text-gray-700">
           <FiMapPin size={12} className="text-gray-400" />
-          <span>{lead.country}</span>
+          <span>{lead.country || "N/A"}</span>
         </div>
         {lead.city && <p className="text-sm text-gray-600">{lead.city}</p>}
         {lead.address && (
@@ -240,7 +255,7 @@ const Leads = () => {
     // Column: Niche
     niche: (
       <div className="px-2 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm w-fit">
-        <p>{lead.niche}</p>
+        <p>{lead.niche || "N/A"}</p>
         <p>{lead.subNiche && ` (${lead.subNiche})`}</p>
       </div>
     ),
@@ -354,7 +369,6 @@ const Leads = () => {
       onClick: (row: any) => {
         handleDeleteLead(
           row._id,
-          row.businessInfo.props.children[0].props.children,
         );
       },
     },
@@ -541,6 +555,13 @@ const Leads = () => {
         }}
         label={"Add Lead"}
       />
+      <Button
+        variant="secondary"
+        onClick={() => {
+          setIsAddQuickLeadModalOpen(true);
+        }}
+        label={"Add Quick Lead"}
+      />
     </>
   );
 
@@ -608,6 +629,14 @@ const Leads = () => {
           modalType={modalType}
           onClose={() => setIsAddOrEditLeadModalOpen(false)}
         />
+      </Modal>
+
+      <Modal
+        heading={"Add Quick Lead"}
+        isModalOpen={isAddQuickLeadModalOpen}
+        setIsModalOpen={setIsAddQuickLeadModalOpen}
+      >
+        <AddQuickLead onClose={() => setIsAddQuickLeadModalOpen(false)} />
       </Modal>
     </div>
   );
