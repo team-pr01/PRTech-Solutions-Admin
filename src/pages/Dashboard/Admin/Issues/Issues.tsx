@@ -7,12 +7,7 @@ import {
 } from "../../../../redux/Features/issues/issuesApi";
 import { useState } from "react";
 import type { TableHead } from "../../../../components/Reusable/Table/Table";
-import {
-  FiEye,
-  FiTrash2,
-  FiCheckCircle,
-  FiClock,
-} from "react-icons/fi";
+import { FiEye, FiTrash2, FiCheckCircle, FiClock, FiMessageCircle, FiXCircle } from "react-icons/fi";
 import Table from "../../../../components/Reusable/Table/Table";
 import { formatDate } from "../../../../utils/formatDate";
 import { toast } from "react-hot-toast";
@@ -52,7 +47,7 @@ export const getStatusColor = (status: string) => {
 };
 
 const Issues = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(10);
   const skip = (page - 1) * limit;
@@ -71,7 +66,6 @@ const Issues = () => {
 
   const [deleteQuery] = useDeleteIssueMutation();
   const [updateIssueStatus] = useUpdateIssueStatusMutation();
-
 
   // Handle delete query
   const handleDeleteQuery = async (id: string, subject: string) => {
@@ -108,7 +102,7 @@ const Issues = () => {
     }
   };
 
-    // Table headers
+  // Table headers
   const issueTableHeaders: TableHead[] = [
     { key: "issueInfo", label: "Query Info" },
     { key: "raisedBy", label: "Raised By" },
@@ -211,6 +205,20 @@ const Issues = () => {
       icon: <MdDone className="inline text-green-600" />,
       onClick: (row: any) => {
         handleUpdateIssueStatus(row?._id, "closed");
+      },
+    },
+    {
+      label: "Need to Discuss",
+      icon: <FiMessageCircle className="inline text-yellow-600" />,
+      onClick: (row: any) => {
+        handleUpdateIssueStatus(row?._id, "needToDiscuss");
+      },
+    },
+    {
+      label: "Cancelled",
+      icon: <FiXCircle className="inline text-red-600" />,
+      onClick: (row: any) => {
+        handleUpdateIssueStatus(row?._id, "cancelled");
       },
     },
     {
