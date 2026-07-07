@@ -67,6 +67,7 @@ const Leads = () => {
   const { data, isLoading, isFetching, refetch } = useGetMyAddedLeadsQuery({
     page,
     skip,
+    limit,
     keyword: searchQuery,
     status: statusFilter,
     country: countryFilter,

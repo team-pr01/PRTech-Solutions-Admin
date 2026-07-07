@@ -13,7 +13,10 @@ import {
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { useDeleteLeadMutation, useGetAllLeadsQuery } from "../../../../redux/Features/Lead/leadApi";
+import {
+  useDeleteLeadMutation,
+  useGetAllLeadsQuery,
+} from "../../../../redux/Features/Lead/leadApi";
 import { useGetAllNichesQuery } from "../../../../redux/Features/Niche/nicheApi";
 import type { TableHead } from "../../../../components/Reusable/Table/Table";
 import { formatDate } from "../../../../utils/formatDate";
@@ -61,6 +64,7 @@ const AllLeads = () => {
   const { data, isLoading, isFetching, refetch } = useGetAllLeadsQuery({
     page,
     skip,
+    limit,
     keyword: searchQuery,
     status: statusFilter,
     country: countryFilter,

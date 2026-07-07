@@ -65,11 +65,54 @@ const leadApi = baseApi.injectEndpoints({
     }),
 
     getMyAddedLeads: builder.query({
-      query: () => ({
-        url: `/lead/my-added-leads`,
-        method: "GET",
-        credentials: "include",
-      }),
+      query: ({
+        page,
+        limit,
+        skip,
+        status,
+        keyword,
+        country,
+        city,
+        niche,
+        subNiche,
+        priority,
+        discoveryCallScheduledDate,
+        followUpDate
+      }: {
+        keyword?: string;
+        limit?: number;
+        skip?: number;
+        page?: number;
+        status?: string;
+        country?: string;
+        city?: string;
+        niche?: string;
+        subNiche?: string;
+        priority?: string;
+        discoveryCallScheduledDate?: string;
+        followUpDate?: string;
+      } = {}) => {
+        const params = new URLSearchParams();
+
+        if (keyword) params.append("keyword", keyword);
+        if (typeof limit === "number") params.append("limit", limit.toString());
+        if (typeof skip === "number") params.append("skip", skip.toString());
+        if (typeof page === "number") params.append("page", page.toString());
+        if (status) params.append("status", status);
+        if (country) params.append("country", country);
+        if (city) params.append("city", city);
+        if (niche) params.append("niche", niche);
+        if (subNiche) params.append("subNiche", subNiche);
+        if (priority) params.append("priority", priority);
+        if (discoveryCallScheduledDate) params.append("discoveryCallScheduledDate", discoveryCallScheduledDate);
+        if (followUpDate) params.append("followUpDate", followUpDate);
+
+        return {
+          url: `/lead/my-added-leads?${params.toString()}`,
+          method: "GET",
+          credentials: "include",
+        };
+      },
       providesTags: ["lead"],
     }),
 
