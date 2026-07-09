@@ -19,6 +19,8 @@ import Queries from "../pages/Dashboard/Admin/Queries/Queries";
 import Issues from "../pages/Dashboard/Admin/Issues/Issues";
 import IssueDetails from "../pages/Dashboard/Admin/Issues/IssueDetails";
 import MyCalendar from "../pages/Dashboard/Admin/MyCalendar/MyCalendar";
+import Blogs from "../pages/Dashboard/Blogs/Blogs";
+import AddOrEditBlog from "../pages/Dashboard/Blogs/AddOrEditBlog/AddOrEditBlog";
 
 export const router = createBrowserRouter([
   // Main layout routes
@@ -46,6 +48,20 @@ export const router = createBrowserRouter([
       {
         path: "home",
         element: <AdminDashboardHome />,
+      },
+      {
+        path: "blogs",
+        element: <Blogs />,
+      },
+      {
+        // for adding new blog
+        path: "blog",
+        element: <AddOrEditBlog />,
+      },
+      {
+        // for editing blog
+        path: "blog/:slug",
+        element: <AddOrEditBlog />,
       },
       {
         path: "clients",

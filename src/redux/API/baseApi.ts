@@ -69,6 +69,7 @@ export const baseApi = createApi({
     "query",
     "issue",
     "calendar",
+    "blog",
   ],
   endpoints: () => ({}),
 });
