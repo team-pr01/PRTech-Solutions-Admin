@@ -24,6 +24,7 @@ type TFormData = {
   imageUrl: FileList | null;
   isFeatured: boolean;
   timeToRead: string;
+  tags: string[];
 };
 
 // Quill modules configuration
@@ -91,6 +92,7 @@ const AddOrEditBlog = () => {
       description: "",
       isFeatured: false,
       timeToRead: "",
+      tags: [],
       imageUrl: null,
     },
   });
@@ -122,6 +124,7 @@ const AddOrEditBlog = () => {
         description: blog.description || "",
         isFeatured: blog.isFeatured || false,
         timeToRead: blog.timeToRead || "",
+        tags: blog.tags || [],
         imageUrl: null,
       });
       setDescription(blog.description || "");
@@ -164,6 +167,7 @@ const AddOrEditBlog = () => {
       formData.append("description", description);
       formData.append("isFeatured", data.isFeatured.toString());
       formData.append("timeToRead", data.timeToRead);
+      tags.forEach((tag) => formData.append("tags", tag));
 
       // Append image file if selected
       if (data.imageUrl && data.imageUrl.length > 0) {
@@ -204,6 +208,24 @@ const AddOrEditBlog = () => {
     setDescription(content);
   };
 
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState<string>("");
+
+  const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const trimmed = tagInput.trim();
+      if (trimmed && !tags.includes(trimmed)) {
+        setTags([...tags, trimmed]);
+      }
+      setTagInput("");
+    }
+  };
+
+  const removeTag = (tag: string) => {
+    setTags(tags.filter((t) => t !== tag));
+  };
+
   if (isLoadingBlog) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -229,7 +251,7 @@ const AddOrEditBlog = () => {
           })}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Category */}
           <SelectDropdown
             label="Category"
@@ -255,6 +277,38 @@ const AddOrEditBlog = () => {
               required: "Time to read is required",
             })}
           />
+        </div>
+
+        <div className="space-y-2">
+          <TextInput
+            name="tags"
+            label={"Tags"}
+            placeholder={"Enter tags and hit enter to add new"}
+            value={tagInput}
+            onChange={(e) => setTagInput(e.target.value)}
+            onKeyDown={handleTagKeyDown}
+            error={errors.tags as any}
+            isRequired={false}
+          />
+          {tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {tags.map((tag, index) => (
+                <div
+                  key={index}
+                  className="bg-blue-50 border border-blue-200 px-3 py-1 rounded-full flex items-center gap-2 text-sm text-blue-700"
+                >
+                  <span>{tag}</span>
+                  <button
+                    type="button"
+                    onClick={() => removeTag(tag)}
+                    className="text-blue-500 hover:text-red-500 transition"
+                  >
+                    <FiX size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Image Upload */}

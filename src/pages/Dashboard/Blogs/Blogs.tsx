@@ -8,7 +8,7 @@ import {
   FiStar,
   FiEdit2,
 } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import {
   useDeleteBlogMutation,
@@ -23,20 +23,7 @@ import Modal from "../../../components/Reusable/Modal/Modal";
 import AddOrEditBlog from "./AddOrEditBlog/AddOrEditBlog";
 import Category from "../../../components/Reusable/Category/Category";
 import { useGetAllCategoriesByAreaNameQuery } from "../../../redux/Features/Categories/categoriesApi";
-
-export type TBlog = {
-  _id: string;
-  imageUrl: string;
-  title: string;
-  slug: string;
-  overview: string;
-  category: string;
-  description: string;
-  isFeatured?: boolean;
-  timeToRead: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-};
+import type { TBlog } from "../../../types/blog.type";
 
 const Blogs = () => {
   const navigate = useNavigate();
@@ -133,8 +120,25 @@ const Blogs = () => {
     // Column: Title
     title: (
       <div className="space-y-1 max-w-[200px]">
-        <p className="font-semibold text-gray-800 truncate">{blog.title}</p>
-        <p className="text-xs text-gray-400 truncate">Slug: {blog.slug}</p>
+        <a
+          href={`https://prtech-solutions.com/blog/${blog?.slug}`}
+          target="_blank"
+          className="font-semibold text-gray-800 truncate"
+        >
+          {blog.title}
+        </a>
+        <div className="flex items-center gap-2">
+          {blog?.tags?.slice(0, 2).map((tag: string) => (
+            <p key={tag} className="text-xs text-primary-10">
+              #{tag}
+            </p>
+          ))}
+          {blog?.tags?.length > 2 && (
+            <p className="text-xs text-gray-600">
+              +{blog.tags.length - 2} more
+            </p>
+          )}
+        </div>
       </div>
     ),
     timeToRead: blog.timeToRead,
