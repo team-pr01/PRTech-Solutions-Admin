@@ -22,6 +22,8 @@ type TFormData = {
   category: string;
   description: string;
   imageUrl: FileList | null;
+  isFeatured: boolean;
+  timeToRead: string;
 };
 
 // Quill modules configuration
@@ -87,6 +89,8 @@ const AddOrEditBlog = () => {
       overview: "",
       category: "",
       description: "",
+      isFeatured: false,
+      timeToRead: "",
       imageUrl: null,
     },
   });
@@ -116,6 +120,8 @@ const AddOrEditBlog = () => {
         overview: blog.overview || "",
         category: blog.category || "",
         description: blog.description || "",
+        isFeatured: blog.isFeatured || false,
+        timeToRead: blog.timeToRead || "",
         imageUrl: null,
       });
       setDescription(blog.description || "");
@@ -150,13 +156,15 @@ const AddOrEditBlog = () => {
   const handleSubmitBlog = async (data: TFormData) => {
     try {
       const formData = new FormData();
-      
+
       // Append text fields
       formData.append("title", data.title);
       formData.append("overview", data.overview);
       formData.append("category", data.category);
       formData.append("description", description);
-      
+      formData.append("isFeatured", data.isFeatured.toString());
+      formData.append("timeToRead", data.timeToRead);
+
       // Append image file if selected
       if (data.imageUrl && data.imageUrl.length > 0) {
         formData.append("file", data.imageUrl[0]);
@@ -231,6 +239,22 @@ const AddOrEditBlog = () => {
               required: "Category is required",
             })}
           />
+          <SelectDropdown
+            label="Featured Status"
+            options={["true", "false"]}
+            error={errors.isFeatured}
+            {...register("isFeatured", {
+              required: "Featured status is required",
+            })}
+          />
+          <TextInput
+            label="Time to Read"
+            placeholder="e.g. 5 mins"
+            error={errors.timeToRead}
+            {...register("timeToRead", {
+              required: "Time to read is required",
+            })}
+          />
         </div>
 
         {/* Image Upload */}
@@ -238,7 +262,7 @@ const AddOrEditBlog = () => {
           <label className="block text-sm font-medium text-gray-700">
             Thumbnail Image
           </label>
-          
+
           {/* Existing Image Preview */}
           {existingImage && !imagePreview && (
             <div className="relative inline-block">

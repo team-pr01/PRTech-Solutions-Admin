@@ -2,14 +2,19 @@
 import { useState } from "react";
 import {
   FiEye,
-  FiEdit2,
   FiTrash2,
   FiImage,
   FiTag,
+  FiStar,
+  FiEdit2,
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { useDeleteBlogMutation, useGetAllBlogsQuery } from "../../../redux/Features/Blogs/blogsApi";
+import {
+  useDeleteBlogMutation,
+  useGetAllBlogsQuery,
+  useMarkAsFeaturedMutation,
+} from "../../../redux/Features/Blogs/blogsApi";
 import type { TableHead } from "../../../components/Reusable/Table/Table";
 import { formatDate } from "../../../utils/formatDate";
 import Button from "../../../components/Reusable/Button/Button";
@@ -27,6 +32,8 @@ export type TBlog = {
   overview: string;
   category: string;
   description: string;
+  isFeatured?: boolean;
+  timeToRead: string;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -42,7 +49,7 @@ const Blogs = () => {
   const [isAddOrEditBlogModalOpen, setIsAddOrEditBlogModalOpen] =
     useState<boolean>(false);
 
-    const {data:categories} = useGetAllCategoriesByAreaNameQuery("blog");
+  const { data: categories } = useGetAllCategoriesByAreaNameQuery("blog");
 
   const { data, isLoading, isFetching, refetch } = useGetAllBlogsQuery({
     page,
@@ -52,14 +59,15 @@ const Blogs = () => {
     category: categoryFilter,
   });
 
-  console.log(data);
-
   const [deleteBlog] = useDeleteBlogMutation();
+  const [markAsFeatured] = useMarkAsFeaturedMutation();
 
   // Table headers
   const blogTableHeaders: TableHead[] = [
     { key: "image", label: "Image" },
     { key: "title", label: "Title" },
+    { key: "timeToRead", label: "Time to Read" },
+    { key: "isFeatured", label: "Featured" },
     { key: "category", label: "Category" },
     { key: "overview", label: "Overview" },
     { key: "createdAt", label: "Created Date" },
@@ -81,6 +89,22 @@ const Blogs = () => {
         },
       );
     }
+  };
+
+  const handleMarkAsFeatured = async (blogId: string, isFeatured: boolean) => {
+    toast.promise(
+      (async () => {
+        const result = await markAsFeatured(blogId).unwrap();
+        await refetch();
+        return result;
+      })(),
+      {
+        loading: `${isFeatured ? "Unmarking" : "Marking"} blog as featured...`,
+        success: `Blog ${isFeatured ? "unmarked" : "marked"} as featured successfully`,
+        error: (error: any) =>
+          error?.data?.message || "Failed to update featured status",
+      },
+    );
   };
 
   // Format table data
@@ -112,6 +136,18 @@ const Blogs = () => {
         <p className="font-semibold text-gray-800 truncate">{blog.title}</p>
         <p className="text-xs text-gray-400 truncate">Slug: {blog.slug}</p>
       </div>
+    ),
+    timeToRead: blog.timeToRead,
+    isFeatured: (
+      <span
+        className={`text-xs px-2 py-1 rounded-full ${
+          blog.isFeatured
+            ? "bg-yellow-100 text-yellow-700 border border-yellow-200"
+            : "bg-gray-100 text-gray-400"
+        }`}
+      >
+        {blog.isFeatured ? "⭐ Featured" : "—"}
+      </span>
     ),
 
     // Column: Category
@@ -146,9 +182,16 @@ const Blogs = () => {
       label: "Edit Blog",
       icon: <FiEdit2 className="inline text-green-600" />,
       onClick: (row: any) => {
-        navigate(`/dashboard/admin/blog/${row.slug}`, );
+        navigate(`/dashboard/admin/blog/${row.slug}`);
         setModalType("edit");
         setIsAddOrEditBlogModalOpen(true);
+      },
+    },
+    {
+      label: "Mark as Featured",
+      icon: <FiStar className="inline text-yellow-600" />,
+      onClick: (row: any) => {
+        handleMarkAsFeatured(row._id, row.isFeatured);
       },
     },
     {
@@ -167,17 +210,17 @@ const Blogs = () => {
   // Category filter dropdown (you can make this dynamic from categories API)
   const categoryFilterDropdown = (
     <select
-        value={categoryFilter}
-        onChange={(e) => setCategoryFilter(e.target.value)}
-        className="input input-sm px-3 py-2 border border-neutral-55/60 focus:border-primary-10 transition duration-300 focus:outline-none rounded-md text-sm shadow-sm cursor-pointer"
-      >
-        <option value="">All Categories</option>
-        {categories?.data?.map((category: any) => (
-          <option key={category?.category} value={category?.category}>
-            {category?.category}
-          </option>
-        ))}
-      </select>
+      value={categoryFilter}
+      onChange={(e) => setCategoryFilter(e.target.value)}
+      className="input input-sm px-3 py-2 border border-neutral-55/60 focus:border-primary-10 transition duration-300 focus:outline-none rounded-md text-sm shadow-sm cursor-pointer"
+    >
+      <option value="">All Categories</option>
+      {categories?.data?.map((category: any) => (
+        <option key={category?.category} value={category?.category}>
+          {category?.category}
+        </option>
+      ))}
+    </select>
   );
 
   // Combine filters
@@ -226,8 +269,7 @@ const Blogs = () => {
         isModalOpen={isAddOrEditBlogModalOpen}
         setIsModalOpen={setIsAddOrEditBlogModalOpen}
       >
-        <AddOrEditBlog
-        />
+        <AddOrEditBlog />
       </Modal>
     </div>
   );

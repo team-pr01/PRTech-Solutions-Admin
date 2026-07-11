@@ -80,6 +80,15 @@ const blogsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["blog"],
     }),
+
+    markAsFeatured: builder.mutation<any, any>({
+      query: (id) => ({
+        url: `/blog/mark-featured/${id}`,
+        method: "PATCH",
+        credentials: "include",
+      }),
+      invalidatesTags: ["blog"],
+    }),
   }),
 });
 
@@ -90,4 +99,5 @@ export const {
   useAddBlogMutation,
   useUpdateBlogMutation,
   useDeleteBlogMutation,
+  useMarkAsFeaturedMutation,
 } = blogsApi;
