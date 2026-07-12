@@ -7,6 +7,7 @@ import {
   FiAlertCircle,
   FiCalendar,
   FiFileText,
+  FiPhoneCall,
 } from "react-icons/fi";
 import { LuLayoutDashboard, LuFolderKanban } from "react-icons/lu";
 import { FiUserPlus } from "react-icons/fi";
@@ -27,6 +28,11 @@ export const adminDashboardLinks: DashboardLink[] = [
     label: "Blogs",
     path: "/dashboard/admin/blogs",
     icon: <FiFileText />,
+  },
+  {
+    label: "Scheduled Calls",
+    path: "/dashboard/admin/scheduled-calls",
+    icon: <FiPhoneCall />,
   },
   {
     label: "My Calendar",

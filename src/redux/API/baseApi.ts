@@ -70,6 +70,7 @@ export const baseApi = createApi({
     "issue",
     "calendar",
     "blog",
+    "scheduledCalls"
   ],
   endpoints: () => ({}),
 });

@@ -21,6 +21,7 @@ import IssueDetails from "../pages/Dashboard/Admin/Issues/IssueDetails";
 import MyCalendar from "../pages/Dashboard/Admin/MyCalendar/MyCalendar";
 import Blogs from "../pages/Dashboard/Blogs/Blogs";
 import AddOrEditBlog from "../pages/Dashboard/Blogs/AddOrEditBlog/AddOrEditBlog";
+import ScheduledCalls from "../pages/Dashboard/Admin/ScheduledCalls/ScheduledCalls";
 
 export const router = createBrowserRouter([
   // Main layout routes
@@ -62,6 +63,10 @@ export const router = createBrowserRouter([
         // for editing blog
         path: "blog/:slug",
         element: <AddOrEditBlog />,
+      },
+      {
+        path: "scheduled-calls",
+        element: <ScheduledCalls />,
       },
       {
         path: "clients",
