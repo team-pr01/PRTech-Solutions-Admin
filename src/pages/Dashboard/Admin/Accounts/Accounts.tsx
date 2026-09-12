@@ -378,12 +378,12 @@ const Accounts = () => {
             {/* Main Stats */}
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div className="text-center p-3 bg-blue-50 rounded-lg">
-                <p className="text-xs text-gray-500 mb-1">Achieved</p>
+                <p className="text-xs text-gray-500 mb-1">Currently Have</p>
                 <p className="text-xl font-bold text-blue-600">
-                  ৳ {(currentEarnings / 100000).toFixed(1)}L
+                  ৳ {(stats?.BDT?.balance / 100000).toFixed(1)}L
                 </p>
                 <p className="text-xs text-gray-400">
-                  {currentEarnings.toLocaleString()} BDT
+                  {stats?.BDT?.balance} BDT
                 </p>
               </div>
               <div className="text-center p-3 bg-orange-50 rounded-lg">
