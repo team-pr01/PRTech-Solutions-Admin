@@ -8,7 +8,7 @@ import AdminDashboardHome from "../pages/Dashboard/Admin/AdminDashboardHome/Admi
 import NotFound from "../pages/NotFound/NotFound";
 import Clients from "../pages/Dashboard/Admin/Clients/Clients";
 import ClientDetails from "../pages/Dashboard/Admin/Clients/ClientDetails";
-import Projects from './../pages/Dashboard/Admin/Projects/Projects';
+import Projects from "./../pages/Dashboard/Admin/Projects/Projects";
 import ProjectDetails from "../pages/Dashboard/Admin/Projects/ProjectDetails";
 import Leads from "../pages/Dashboard/Leads/Leads";
 import LeadDetails from "../pages/Dashboard/Leads/LeadDetails";
@@ -22,6 +22,9 @@ import MyCalendar from "../pages/Dashboard/Admin/MyCalendar/MyCalendar";
 import Blogs from "../pages/Dashboard/Blogs/Blogs";
 import AddOrEditBlog from "../pages/Dashboard/Blogs/AddOrEditBlog/AddOrEditBlog";
 import ScheduledCalls from "../pages/Dashboard/Admin/ScheduledCalls/ScheduledCalls";
+import StaffFormLayout from "../layouts/StaffFormLayout";
+import StaffForm from "../pages/StaffForm/StaffForm";
+import StaffDetails from "../pages/Dashboard/Admin/StaffDetails/StaffDetails";
 
 export const router = createBrowserRouter([
   // Main layout routes
@@ -105,6 +108,10 @@ export const router = createBrowserRouter([
         element: <Staffs />,
       },
       {
+        path: "staff/:id",
+        element: <StaffDetails />,
+      },
+      {
         path: "queries",
         element: <Queries />,
       },
@@ -127,15 +134,29 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  // Staff form
+  {
+    path: "staff-onboarding",
+    element: <StaffFormLayout />,
+    errorElement: <ErrorComponent />,
+    children: [
+      {
+        path: "",
+        element: <StaffForm />,
+      },
+
+      {
+        path: "*",
+        element: <NotFound />,
+      },
+    ],
+  },
   // Staff dashboard routes
   {
     path: "dashboard/staff",
-    element: (
-        <DashboardLayout />
-    ),
+    element: <DashboardLayout />,
     errorElement: <ErrorComponent />,
     children: [
-      
       {
         path: "leads",
         element: <Leads />,

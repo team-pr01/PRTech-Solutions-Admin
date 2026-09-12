@@ -15,6 +15,7 @@ import {
 import toast from "react-hot-toast";
 import { formatDate } from "../../../../utils/formatDate";
 import AddOrUpdateStaffModal from "../../../../components/Dashboard/AdminPages/StaffsPage/AddOrUpdateStaffModal/AddOrUpdateStaffModal";
+import { Link } from "react-router-dom";
 
 const Staffs = () => {
   const [page, setPage] = useState<number>(1);
@@ -24,6 +25,7 @@ const Staffs = () => {
     page,
     limit,
   });
+
   const {
     data: singleStaff,
     isLoading: isSingleStaffLoading,
@@ -73,49 +75,32 @@ const Staffs = () => {
     { key: "gender", label: "Gender" },
     { key: "location", label: "Location" },
     { key: "jobRole", label: "Job Role" },
-    { key: "pagesAssigned", label: "Pages Assigned" },
     { key: "joinedDate", label: "Joined Date" },
   ];
 
   const tableData = allStaffs?.data?.staffs?.map((staff: any) => ({
     _id: staff?._id || "N/A",
-    userId: staff?.userId?._id,
-    name: staff?.userId?.name,
-    email: staff?.userId?.email,
-    phoneNumber: staff?.userId?.phoneNumber,
-    gender: staff?.userId?.gender || "N/A",
+    name: (
+      <Link to={`/dashboard/admin/staff/${staff?._id}`} className="underline">
+      {staff?.name}
+      </Link>
+    ),
+    email: staff?.email,
+    phoneNumber: staff?.phoneNumber,
+    gender: (
+      <span className="capitalize">{staff?.gender}</span>
+    ),
     location: (
       <div className="space-y-0.5">
         <p className="text-sm text-gray-700">
-          {staff?.userId?.country || "N/A"}
+          {staff?.country || "N/A"}
         </p>
-        {staff?.userId?.city && (
-          <p className="text-xs text-gray-500">{staff?.userId?.city}</p>
+        {staff?.city && (
+          <p className="text-xs text-gray-500">{staff?.city}</p>
         )}
       </div>
     ),
     jobRole: staff?.jobRole,
-    pagesAssigned: (
-      <div className="flex flex-wrap gap-1">
-        {staff?.pagesAssigned && staff.pagesAssigned.length > 0 ? (
-          staff.pagesAssigned.slice(0, 3).map((page: string, index: number) => (
-            <span
-              key={index}
-              className="inline-block px-2 py-0.5 text-xs bg-blue-100 text-blue-700 rounded"
-            >
-              {page}
-            </span>
-          ))
-        ) : (
-          <span className="text-gray-400">No pages assigned</span>
-        )}
-        {staff?.pagesAssigned?.length > 3 && (
-          <span className="inline-block px-2 py-0.5 text-xs bg-gray-100 text-gray-600 rounded">
-            +{staff.pagesAssigned.length - 3} more
-          </span>
-        )}
-      </div>
-    ),
     joinedDate: formatDate(staff?.createdAt),
   }));
 
