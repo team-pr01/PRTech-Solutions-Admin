@@ -25,6 +25,7 @@ import ScheduledCalls from "../pages/Dashboard/Admin/ScheduledCalls/ScheduledCal
 import StaffFormLayout from "../layouts/StaffFormLayout";
 import StaffForm from "../pages/StaffForm/StaffForm";
 import StaffDetails from "../pages/Dashboard/Admin/StaffDetails/StaffDetails";
+import TaskManagement from "../pages/Dashboard/Admin/TaskManagement/TaskManagement";
 
 export const router = createBrowserRouter([
   // Main layout routes
@@ -52,6 +53,10 @@ export const router = createBrowserRouter([
       {
         path: "home",
         element: <AdminDashboardHome />,
+      },
+      {
+        path: "task-management",
+        element: <TaskManagement />,
       },
       {
         path: "blogs",
