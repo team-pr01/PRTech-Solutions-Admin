@@ -8,9 +8,9 @@ import type { RootState } from "../store";
 
 // export const backendBaseUrl = "http://localhost:5000";
 // -------Development Server-----------
-export const backendBaseUrl = "https://prtech-solutions-server.vercel.app";
+// export const backendBaseUrl = "https://prtech-solutions-server.vercel.app";
 // Production server
-// export const backendBaseUrl = "https://prtech-solutions-server.onrender.com";
+export const backendBaseUrl = "https://prtech-solutions-server.onrender.com";
 const baseQuery = fetchBaseQuery({
   baseUrl: `${backendBaseUrl}/api/v1`,
   credentials: "include",
